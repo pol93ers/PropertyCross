@@ -4,8 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -13,24 +18,18 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.util.Component;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MainFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MainFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class MainFragment extends FragmentBase {
-    @NonNull
-    @Override
+
+    private FloatingActionButton searchFAB;
+
+    @NonNull @Override
     public ID getComponent() {
         return ID.MainFragment;
     }
 
-    private OnFragmentInteractionListener mListener;
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    private OnSearchFragmentListener searchFragmentListener;
+    public interface OnSearchFragmentListener {
+        void onSearchFragment();
     }
 
     public static MainFragment newInstance() {
@@ -47,7 +46,9 @@ public class MainFragment extends FragmentBase {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
+        searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
 
+        setListeners();
 
         return root;
     }
@@ -55,17 +56,34 @@ public class MainFragment extends FragmentBase {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        searchFragmentListener = onAttachGetListener(OnSearchFragmentListener.class, context);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        searchFragmentListener = null;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_fragment_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.menu_main) {
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setListeners(){
+        searchFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchFragmentListener.onSearchFragment();
+            }
+        });
     }
 }

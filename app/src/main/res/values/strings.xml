@@ -1,4 +1,44 @@
 <resources>
     <string name="app_name">Property Cross</string>
 
+    <string name="title_menu_main">Menú principal</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="login">Log In</string>
+    <string name="user">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="repeat_password">Repetir contraseña</string>
+    <string name="next">Siguiente</string>
+    <string name="email">Correo electrónico</string>
+    <string name="name">Nombre</string>
+    <string name="surname">Apellidos</string>
+    <string name="receive_notifications">Recibir notificaciones</string>
+    <string name="cancel">Cancelar</string>
+    <string name="ok">OK</string>
+    <string name="rent">Alquiler</string>
+    <string name="buy">Venta</string>
+    <string name="enable_gps">Habilitar GPS</string>
+    <string name="results_not_found">No se han encontrado resultados de búsqueda</string>
+    <string name="properties">Immuebles</string>
+    <string name="property">Property</string>
+    <string name="search">Buscar</string>
+    <string name="search_hint">Dirección, CP, Ciudad…</string>
+    <string name="choose_location">Escoge una localización</string>
+    <string name="my_location">Mi ubicación</string>
+    <string name="favourites">Favoritos</string>
+    <string name="favourites_not_found">No tienes immuebles favoritos</string>
+    <string name="init_session">Iniciar sesión</string>
+    <string name="profile">Perfil</string>
+    <string name="close_session">Cerrar sesión</string>
+    <string name="remove_user">Eliminar usuario</string>
+    <string name="sesion_favourites">Para poder acceder a la sección de Favoritos debes de haber iniciado sesión</string>
+    <string name="sesion_profile">Para poder acceder a la sección de Perfil debes de haber iniciado sesión</string>
+    <string name="message_dialog_remove_user">¿Estás seguro que quieres eliminar el usuario?</string>
+    <string name="message_dialog_close_session">¿Estás seguro que quieres cerrar la sesión?</string>
+    <string name="views">visitas</string>
+    <string name="view_map">Ver mapa</string>
+    <string name="comments">Comentarios</string>
+    <string name="view_more">Ver más</string>
+    <string name="add_comment">Añadir comentario</string>
+    <string name="call">Llamar</string>
+    <string name="send_email">Enviar mail</string>
 </resources>

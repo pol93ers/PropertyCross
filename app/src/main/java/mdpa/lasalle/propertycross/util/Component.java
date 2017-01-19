@@ -10,6 +10,14 @@ public interface Component {
         MainActivity("MainActivity"),
 
         MainFragment("MainFragment"),
+        MainLandscapeFragment("MainLandscapeFragment"),
+        SessionFragment("SessionFragment"),
+        LoginFragment("LoginFragment"),
+        SignUpFragment("SignUpFragment"),
+        MapFragment("MapFragment"),
+        SearchFragment("SearchFragment"),
+        PropertyFragment("PropertyFragment"),
+        CommentFragment("CommentFragment")
         ;
 
         private String id;
