@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,14 +14,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import mdpa.lasalle.propertycross.R;
+import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.util.Component;
 
-public class MainFragment extends FragmentBase {
+public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
 
     private FloatingActionButton searchFAB;
+    private RecyclerView recyclerProperties, recyclerFavourites;
+    private TextView numberPropertiesText, numberPropertiesFavouritesText;
 
     @NonNull @Override
     public ID getComponent() {
@@ -47,6 +52,9 @@ public class MainFragment extends FragmentBase {
         View root = inflater.inflate(R.layout.fragment_main, container, false);
 
         searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
+        recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
+
+
 
         setListeners();
 
@@ -85,5 +93,15 @@ public class MainFragment extends FragmentBase {
                 searchFragmentListener.onSearchFragment();
             }
         });
+    }
+
+    @Override
+    public void onItemClick(Object item, int position, View rowView, int viewType) {
+
+    }
+
+    @Override
+    public void onItemLongClick(Object item, int position, View rowView, int viewType) {
+
     }
 }

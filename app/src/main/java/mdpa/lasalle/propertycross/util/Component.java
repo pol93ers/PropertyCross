@@ -8,16 +8,19 @@ public interface Component {
 
         SplashActivity("SplashActivity"),
         MainActivity("MainActivity"),
+        LoginActivity("LoginActivity"),
 
         MainFragment("MainFragment"),
-        MainLandscapeFragment("MainLandscapeFragment"),
+        MapLandscapeFragment("MapLandscapeFragment"),
         SessionFragment("SessionFragment"),
         LoginFragment("LoginFragment"),
         SignUpFragment("SignUpFragment"),
         MapFragment("MapFragment"),
         SearchFragment("SearchFragment"),
         PropertyFragment("PropertyFragment"),
-        CommentFragment("CommentFragment")
+        CommentFragment("CommentFragment"),
+
+        AdapterRecyclerMain("AdapterRecyclerMain")
         ;
 
         private String id;

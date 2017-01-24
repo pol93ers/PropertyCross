@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/sessionProfileLayout"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sesion_profile"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:gravity="center_horizontal"
+            android:textSize="18sp" />
+
+        <Button
+            android:text="@string/init_session"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sessionProfileButton"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true" />
+
+    </RelativeLayout>
+
+</FrameLayout>
