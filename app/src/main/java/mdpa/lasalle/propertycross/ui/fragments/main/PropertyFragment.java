@@ -30,6 +30,12 @@ public class PropertyFragment extends FragmentBase{
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_property, container, false);
 
+        setListeners();
+
         return root;
+    }
+
+    private void setListeners(){
+
     }
 }

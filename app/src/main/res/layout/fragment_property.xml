@@ -1,6 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:id="@+id/photosPropertyPager">
+
+    </android.support.v4.view.ViewPager>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numVisitsText"
+            android:layout_alignParentRight="true" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addressText" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/metersText"
+            android:layout_below="@+id/addressText"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:text="VENTA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/typeText"
+            android:layout_alignTop="@+id/metersText"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/metersText" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/metersText"
+            android:layout_marginTop="10dp"
+            android:id="@+id/priceText" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/descriptionText"
+            android:layout_below="@+id/priceText"
+            android:layout_marginTop="10dp" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_share_black_24dp"
+            android:layout_below="@+id/numVisitsText"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/shareImage"
+            android:layout_marginTop="10dp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:background="@android:color/darker_gray">
+
+        <Button
+            android:text="@string/view_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/viewMapButton"
+            android:layout_gravity="center" />
+    </FrameLayout>
+
+    <TextView
+        android:text="@string/comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView9"
+        android:textSize="24sp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

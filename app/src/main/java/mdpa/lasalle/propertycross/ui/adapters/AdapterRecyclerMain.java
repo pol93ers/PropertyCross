@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
@@ -52,7 +52,7 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
     @Override
     public void onBindViewHolder(final BindableViewHolder<I> holder, int position) {
         super.onBindViewHolder(holder, position);
-        Picasso.with(context).load(holder.item.getProperty().getPhoto()).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
+        Glide.with(context).load(holder.item.getProperty().getPhoto()).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
         ((TextView)holder.itemView.findViewById(R.id.propertyAddressText)).setText(holder.item.getProperty().getAddress());
         ((TextView)holder.itemView.findViewById(R.id.propertyMetersText)).setText(holder.item.getProperty().getMeters());
         ((TextView)holder.itemView.findViewById(R.id.propertyPriceText)).setText(holder.item.getProperty().getPrice());
