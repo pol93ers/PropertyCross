@@ -5,12 +5,17 @@ import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 
 
 public class MapLandscapeFragment extends FragmentBase {
+
+    private TextView numPropertiesText, emptyMapText;
+
+
     @NonNull
     @Override
     public ID getComponent() {
@@ -30,6 +35,9 @@ public class MapLandscapeFragment extends FragmentBase {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_map_landscape, container, false);
+
+        numPropertiesText = (TextView) root.findViewById(R.id.numPropertiesMap);
+        emptyMapText = (TextView) root.findViewById(R.id.emptyMapText);
 
         return root;
     }

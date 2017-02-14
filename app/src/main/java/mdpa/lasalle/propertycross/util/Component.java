@@ -12,13 +12,16 @@ public interface Component {
 
         MainFragment("MainFragment"),
         MapLandscapeFragment("MapLandscapeFragment"),
-        SessionFragment("SessionFragment"),
-        LoginFragment("LoginFragment"),
-        SignUpFragment("SignUpFragment"),
+        FavouritesFragment("FavouritesFragment"),
+        ProfileFragment("ProfileFragment"),
         MapFragment("MapFragment"),
         SearchFragment("SearchFragment"),
         PropertyFragment("PropertyFragment"),
         CommentFragment("CommentFragment"),
+
+        SessionFragment("SessionFragment"),
+        LoginFragment("LoginFragment"),
+        SignUpFragment("SignUpFragment"),
 
         AdapterRecyclerMain("AdapterRecyclerMain")
         ;

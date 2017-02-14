@@ -4,21 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.activity.ActivityBase;
-import mdpa.lasalle.propertycross.ui.fragments.login.LoginFragment;
-import mdpa.lasalle.propertycross.ui.fragments.login.SessionFragment;
-import mdpa.lasalle.propertycross.ui.fragments.login.SignUpFragment;
+import mdpa.lasalle.propertycross.ui.fragments.main.FavouritesFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
+import mdpa.lasalle.propertycross.ui.fragments.main.ProfileFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.SearchFragment;
 import mdpa.lasalle.propertycross.util.Component;
 import mdpa.lasalle.propertycross.util.FragmentHelper;
 import mdpa.lasalle.propertycross.util.FragmentManagerUtils;
 
-public class MainActivity extends ActivityBase implements MainFragment.OnSearchFragmentListener,
-    SessionFragment.OnLoginFragmentListener, SessionFragment.OnSignUpFragmentListener{
+public class MainActivity extends ActivityBase implements BottomNavigationView.OnNavigationItemSelectedListener,
+        MainFragment.OnSearchFragmentListener {
 
     @NonNull
     @Override
@@ -38,6 +40,14 @@ public class MainActivity extends ActivityBase implements MainFragment.OnSearchF
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        BottomNavigationView bottomNavigationView =
+                (BottomNavigationView) findViewById(R.id.activity_main_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+
+        View view = bottomNavigationView.findViewById(R.id.action_properties);
+        view.performClick();
+
+
         if (savedInstanceState == null) {
             FragmentHelper helper = getFragmentHelper();
             helper.commit(helper.replace(
@@ -51,22 +61,41 @@ public class MainActivity extends ActivityBase implements MainFragment.OnSearchF
     }
 
     @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_properties:
+                FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, MainFragment.newInstance(), true, true);
+                break;
+            case R.id.action_favourites:
+                FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, FavouritesFragment.newInstance(), true, true);
+                break;
+            case R.id.action_profile:
+                FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, ProfileFragment.newInstance(), true, true);
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStackImmediate();
+        }
+
+    }
+
+    @Override
     public void onSearchFragment() {
         FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, SearchFragment.newInstance(), true, true);
     }
 
-    @Override
-    public void onLoginFragment() {
-        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, LoginFragment.newInstance(), true, true);
-    }
-
-    @Override
-    public void onSignUpFragment() {
-        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, SignUpFragment.newInstance(), true, true);
-    }
-
-    /*@Override
     public void onLoginActivity() {
         startActivityAndFinish(new Intent(this, LoginActivity.class));
-    }*/
+    }
 }

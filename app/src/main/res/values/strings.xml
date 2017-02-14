@@ -47,4 +47,10 @@
     <string name="email_no_valid">El correo electrónico introducido no es válido</string>
     <string name="empty_fields">Todos los campos tienen que estar rellenados.</string>
     <string name="select_photo">Seleccionar foto:</string>
+    <string name="title_order">Ordenar por</string>
+    <string name="less_more_meters">de menos a más m</string>
+    <string name="more_less_meters">de más a menos m</string>
+    <string name="less_more_distance">de menos a más distancia</string>
+    <string name="less_more_price">de menos a más precio</string>
+    <string name="more_less_price">de más a menos precio</string>
 </resources>

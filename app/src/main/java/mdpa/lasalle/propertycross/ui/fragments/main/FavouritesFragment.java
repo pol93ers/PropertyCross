@@ -3,79 +3,57 @@ package mdpa.lasalle.propertycross.ui.fragments.main;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import mdpa.lasalle.propertycross.R;
-import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
-import mdpa.lasalle.propertycross.util.Component;
 
-public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
+public class FavouritesFragment extends FragmentBase{
 
-    private FloatingActionButton searchFAB;
-    private RecyclerView recyclerProperties, recyclerFavourites;
-    private TextView numberPropertiesText, numberPropertiesFavouritesText;
-
-    @NonNull @Override
+    @NonNull
+    @Override
     public ID getComponent() {
-        return ID.MainFragment;
+        return ID.FavouritesFragment;
     }
 
-    private OnSearchFragmentListener searchFragmentListener;
-    public interface OnSearchFragmentListener {
-        void onSearchFragment();
-    }
-
-    public static MainFragment newInstance() {
-        return new MainFragment();
+    public static FavouritesFragment newInstance() {
+        return new FavouritesFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.properties);
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.favourites);
         setHasOptionsMenu(true);
 
-        View root = inflater.inflate(R.layout.fragment_main_properties, container, false);
-
-        searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
-        recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
-
+        View root = inflater.inflate(R.layout.fragment_main_favourites, container, false);
 
         setListeners();
 
         return root;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        searchFragmentListener = onAttachGetListener(OnSearchFragmentListener.class, context);
-    }
+    private void setListeners(){
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        searchFragmentListener = null;
     }
 
     @Override
@@ -104,22 +82,8 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
         }
     }
 
-    private void setListeners(){
-        searchFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                searchFragmentListener.onSearchFragment();
-            }
-        });
-    }
-
     @Override
-    public void onItemClick(Object item, int position, View rowView, int viewType) {
-
-    }
-
-    @Override
-    public void onItemLongClick(Object item, int position, View rowView, int viewType) {
-
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
