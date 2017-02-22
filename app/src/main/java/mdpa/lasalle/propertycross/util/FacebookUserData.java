@@ -13,7 +13,6 @@ public class FacebookUserData {
     @SerializedName("last_name") private String lastName;
     @SerializedName("email") private String email;
     @SerializedName("birthday") private String birthday;
-    @SerializedName(value = "is_verified", alternate = "verified") private Boolean verified;
     @SerializedName("gender") private String gender;
 
     public FacebookUserData() {
@@ -43,5 +42,9 @@ public class FacebookUserData {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getGender() {
+        return gender;
     }
 }

@@ -20,7 +20,7 @@ import mdpa.lasalle.propertycross.util.FragmentHelper;
 import mdpa.lasalle.propertycross.util.FragmentManagerUtils;
 
 public class MainActivity extends ActivityBase implements BottomNavigationView.OnNavigationItemSelectedListener,
-        MainFragment.OnSearchFragmentListener {
+        MainFragment.OnSearchFragmentListener, ProfileFragment.OnLoginActivityListener, FavouritesFragment.OnLoginActivityListener {
 
     @NonNull
     @Override
@@ -95,7 +95,8 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
         FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, SearchFragment.newInstance(), true, true);
     }
 
+    @Override
     public void onLoginActivity() {
-        startActivityAndFinish(new Intent(this, LoginActivity.class));
+        startActivityAndFinish(LoginActivity.newStartIntent(this));
     }
 }

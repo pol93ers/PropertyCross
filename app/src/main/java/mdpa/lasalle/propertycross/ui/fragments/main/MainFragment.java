@@ -27,8 +27,8 @@ import mdpa.lasalle.propertycross.util.Component;
 public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
 
     private FloatingActionButton searchFAB;
-    private RecyclerView recyclerProperties, recyclerFavourites;
-    private TextView numberPropertiesText, numberPropertiesFavouritesText;
+    private RecyclerView recyclerProperties;
+    private TextView numberPropertiesText;
 
     @NonNull @Override
     public ID getComponent() {
@@ -59,7 +59,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
         searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
         recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
-
+        numberPropertiesText = (TextView) root.findViewById(R.id.numberProperties);
 
         setListeners();
 

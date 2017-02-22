@@ -6,18 +6,33 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 
 public class FavouritesFragment extends FragmentBase{
+
+    private RelativeLayout noSessionFavouritesLayout, favouritesLayout;
+    private Button sessionFavouritesButton;
+    private TextView numFavouritesTextView;
+    private RecyclerView favouritesRecyclerView;
+
+    private OnLoginActivityListener loginActivityListener;
+    public interface OnLoginActivityListener {
+        void onLoginActivity();
+    }
 
     @NonNull
     @Override
@@ -32,6 +47,7 @@ public class FavouritesFragment extends FragmentBase{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        loginActivityListener = onAttachGetListener(OnLoginActivityListener.class, context);
     }
 
     @Override
@@ -47,13 +63,37 @@ public class FavouritesFragment extends FragmentBase{
 
         View root = inflater.inflate(R.layout.fragment_main_favourites, container, false);
 
+        noSessionFavouritesLayout = (RelativeLayout) root.findViewById(R.id.noSessionFavouritesLayout);
+        favouritesLayout = (RelativeLayout) root.findViewById(R.id.favouritesLayout);
+        sessionFavouritesButton = (Button) root.findViewById(R.id.sessionFavouritesButton);
+        numFavouritesTextView = (TextView) root.findViewById(R.id.numberPropertiesFavourites);
+        favouritesRecyclerView = (RecyclerView) root.findViewById(R.id.recyclerFavourites);
+
         setListeners();
 
         return root;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(ApplicationPropertyCross.getInstance().preferences().getLoginApiKey() != null){
+            noSessionFavouritesLayout.setVisibility(View.GONE);
+            favouritesLayout.setVisibility(View.VISIBLE);
+        }else{
+            noSessionFavouritesLayout.setVisibility(View.VISIBLE);
+            favouritesLayout.setVisibility(View.GONE);
+        }
+    }
+
     private void setListeners(){
 
+        sessionFavouritesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loginActivityListener.onLoginActivity();
+            }
+        });
     }
 
     @Override

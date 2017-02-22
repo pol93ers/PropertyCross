@@ -1,6 +1,7 @@
 package mdpa.lasalle.propertycross.ui.fragments.login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.util.FacebookUserData;
@@ -67,11 +70,13 @@ public class SessionFragment extends FragmentBase implements
     public void onAttach(Context context) {
         super.onAttach(context);
         loginFragmentListener = onAttachGetListener(OnLoginFragmentListener.class, context);
+        signUpFragmentListener = onAttachGetListener(OnSignUpFragmentListener.class, context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fbCallbackManager = CallbackManager.Factory.create();
     }
 
     @Override
@@ -86,7 +91,7 @@ public class SessionFragment extends FragmentBase implements
         fbLoginButton.setFragment(this);
 
         fbLoginButton.setReadPermissions(
-                "public_profile", "email", "user_birthday", "user_friends"
+                "public_profile", "email"
         );
         fbLoginButton.registerCallback(fbCallbackManager, this);
 
@@ -96,12 +101,6 @@ public class SessionFragment extends FragmentBase implements
     }
 
     private void setListeners(){
-        fbLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
         loginSessionText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,8 +118,21 @@ public class SessionFragment extends FragmentBase implements
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        fbCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
     public void onSuccess(LoginResult loginResult) {
 
+        /*GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(), graphRegisterCallback
+        );
+        Bundle params = new Bundle();
+        params.putString("fields", "id,first_name,last_name,email");
+        request.setParameters(params);
+        request.executeAsync();*/
     }
 
     @Override
@@ -136,12 +148,22 @@ public class SessionFragment extends FragmentBase implements
     private GraphRequest.GraphJSONObjectCallback graphRegisterCallback = new GraphRequest.GraphJSONObjectCallback() {
         @Override
         public void onCompleted(JSONObject object, GraphResponse response) {
-            new LoadFacebookPictureBitmap2Base64(){
-                @Override
-                protected void onPostExecute(String base64image) {
+            if (response.getError() == null) {
+                final FacebookUserData fbData = new Gson().fromJson(
+                        response.getRawResponse(), FacebookUserData.class);
 
-                }
-            }.execute(Profile.getCurrentProfile().getProfilePictureUri(500, 500));
+
+
+                new LoadFacebookPictureBitmap2Base64(){
+                    @Override
+                    protected void onPostExecute(String base64image) {
+
+                    }
+                }.execute(Profile.getCurrentProfile().getProfilePictureUri(500, 500));
+
+            } else {
+                Log.e(getComponent().toString(), "Error loading user facebook data!", response.getError().getException());
+            }
         }
     };
 

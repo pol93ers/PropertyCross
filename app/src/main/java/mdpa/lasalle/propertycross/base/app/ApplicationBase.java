@@ -45,6 +45,7 @@ public abstract class ApplicationBase extends Application implements Component{
         @CallSuper
         protected void onDestroy() {
             LogUtils.v(TAG, "Application Destroyed!");
+            //TODO Disconnect User
         }
 
         private final ActivityLifecycleCallbacks callbacks = new ActivityLifecycleCallbacks() {

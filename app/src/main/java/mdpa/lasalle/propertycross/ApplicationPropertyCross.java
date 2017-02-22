@@ -2,6 +2,9 @@ package mdpa.lasalle.propertycross;
 
 import android.support.annotation.NonNull;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
 import mdpa.lasalle.propertycross.base.app.ApplicationBase;
 import mdpa.lasalle.propertycross.data.AppPreferences;
 
@@ -28,6 +31,9 @@ public class ApplicationPropertyCross extends ApplicationBase{
         appPreferences = new AppPreferences(this);
         appPreferences.removeUser();
         appPreferences.removeLogin();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
     }
 
     public AppPreferences preferences() {

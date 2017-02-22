@@ -53,4 +53,6 @@
     <string name="less_more_distance">de menos a más distancia</string>
     <string name="less_more_price">de menos a más precio</string>
     <string name="more_less_price">de más a menos precio</string>
+    <string name="google_maps_key">AIzaSyDmNiloMu-D-e9pS8U52CWlj_vxxD48rfQ</string>
+    <string name="facebook_app_id">294642490953541</string>
 </resources>

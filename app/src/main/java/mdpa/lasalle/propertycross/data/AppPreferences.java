@@ -13,8 +13,6 @@ public class AppPreferences extends PreferencesBase{
         LOGIN_API_KEY("login_api_key"),
 
         DEVICE_TOKEN("device_token"),
-
-        DISCONNECT_USER("disconnect_user"),
         ;
 
         private final String val;
@@ -77,23 +75,11 @@ public class AppPreferences extends PreferencesBase{
         setLoginApiKey(null);
     }
 
-    // endregion accessors login
-
-    // region accessors device
-
     public boolean setDeviceToken(@Nullable String loginKey) {
         return putString(PREFERENCE.DEVICE_TOKEN.val(), loginKey);
     }
 
     public @Nullable String getDeviceToken() {
         return getString(PREFERENCE.DEVICE_TOKEN.val(), null);
-    }
-
-    public boolean setDisconnectUser(@Nullable boolean disconnectBool) {
-        return putBoolean(PREFERENCE.DISCONNECT_USER.val(), disconnectBool);
-    }
-
-    public @Nullable boolean getDisconnectUser() {
-        return getBoolean(PREFERENCE.DISCONNECT_USER.val(), false);
     }
 }
