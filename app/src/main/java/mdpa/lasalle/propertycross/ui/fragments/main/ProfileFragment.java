@@ -76,6 +76,8 @@ public class ProfileFragment extends FragmentBase{
                              Bundle savedInstanceState) {
 
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.profile);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_main_profile, container, false);

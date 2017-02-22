@@ -36,8 +36,8 @@ public class SearchFragment extends FragmentBase{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.search);
-        //((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_search, container, false);

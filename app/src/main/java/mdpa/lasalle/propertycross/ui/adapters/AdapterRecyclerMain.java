@@ -13,12 +13,13 @@ import com.bumptech.glide.Glide;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
-
+import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
 
 
 public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> extends AdapterRecyclerBase<I, AdapterRecyclerBase.BindableViewHolder<I>>{
 
     private Context context;
+    private MainFragment.OnPropertyFragmentListener listener;
 
     @NonNull
     @Override
@@ -26,8 +27,9 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
         return ID.AdapterRecyclerMain;
     }
 
-    public AdapterRecyclerMain(){
-
+    public AdapterRecyclerMain(Context context, MainFragment.OnPropertyFragmentListener listener){
+        this.context = context;
+        this.listener = listener;
     }
 
     public interface PropertyItem<P extends PropertyItem.Property>{
@@ -70,6 +72,12 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
                 }else{
                     ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_border_black_24dp);
                 }
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onPropertyFragment();
             }
         });
     }

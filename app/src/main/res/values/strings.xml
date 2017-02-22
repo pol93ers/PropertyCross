@@ -55,4 +55,7 @@
     <string name="more_less_price">de más a menos precio</string>
     <string name="google_maps_key">AIzaSyDmNiloMu-D-e9pS8U52CWlj_vxxD48rfQ</string>
     <string name="facebook_app_id">294642490953541</string>
+    <string name="share">Comparte con</string>
+    <string name="share_text">Si te gusta Property Cross</string>
+    <string name="no_comments">No hay comentarios sobre este immueble</string>
 </resources>

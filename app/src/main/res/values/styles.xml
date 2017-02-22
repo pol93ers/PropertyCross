@@ -13,6 +13,12 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- Actionbar Theme -->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <!-- Actionbar Overlay Theme -->
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <!-- Splash Activity Theme -->
     <style name="AppTheme.NoActionBar.Splash">
         <item name="android:windowBackground">?attr/colorPrimary</item>

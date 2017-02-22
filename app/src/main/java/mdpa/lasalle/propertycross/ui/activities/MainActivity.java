@@ -13,14 +13,18 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.activity.ActivityBase;
 import mdpa.lasalle.propertycross.ui.fragments.main.FavouritesFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
+import mdpa.lasalle.propertycross.ui.fragments.main.MapFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.ProfileFragment;
+import mdpa.lasalle.propertycross.ui.fragments.main.PropertyFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.SearchFragment;
 import mdpa.lasalle.propertycross.util.Component;
 import mdpa.lasalle.propertycross.util.FragmentHelper;
 import mdpa.lasalle.propertycross.util.FragmentManagerUtils;
 
 public class MainActivity extends ActivityBase implements BottomNavigationView.OnNavigationItemSelectedListener,
-        MainFragment.OnSearchFragmentListener, ProfileFragment.OnLoginActivityListener, FavouritesFragment.OnLoginActivityListener {
+        MainFragment.OnSearchFragmentListener, ProfileFragment.OnLoginActivityListener,
+        FavouritesFragment.OnLoginActivityListener, PropertyFragment.OnMapPropertyFragmentListener,
+        MainFragment.OnPropertyFragmentListener{
 
     @NonNull
     @Override
@@ -97,6 +101,16 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
 
     @Override
     public void onLoginActivity() {
-        startActivityAndFinish(LoginActivity.newStartIntent(this));
+        startActivity(LoginActivity.newStartIntent(this));
+    }
+
+    @Override
+    public void onMapPropertyFragment() {
+        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, MapFragment.newInstance(), true, true);
+    }
+
+    @Override
+    public void onPropertyFragment() {
+        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, PropertyFragment.newInstance(), true, true);
     }
 }

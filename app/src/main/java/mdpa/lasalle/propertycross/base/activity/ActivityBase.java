@@ -40,16 +40,6 @@ public abstract class ActivityBase extends AppCompatActivity  implements Compone
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public @NonNull
     View findViewById(@IdRes int id) {
         View view = super.findViewById(id);
@@ -67,6 +57,20 @@ public abstract class ActivityBase extends AppCompatActivity  implements Compone
     protected void startActivityAndFinish(Intent intent) {
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+        Log.e("Count",count+"");
+
+        if (count == 0) {
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStackImmediate();
+        }
+
     }
 
     //region Fragments

@@ -1,138 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/noSessionProfileLayout"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sesion_profile"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="20dp"
-            android:gravity="center_horizontal"
-            android:textSize="18sp" />
-
-        <Button
-            android:text="@string/init_session"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sessionProfileButton"
-            android:layout_marginBottom="20dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true" />
-
-    </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/profileLayout">
+        android:layout_height="wrap_content">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/noSessionProfileLayout"
+            android:visibility="gone">
 
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/default_user"
-                android:id="@+id/profileImageView" />
+                android:text="@string/sesion_profile"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="20dp"
+                android:gravity="center_horizontal"
+                android:textSize="18sp" />
 
-            <ImageView
+            <Button
+                android:text="@string/init_session"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/ic_add_circle_black_24dp"
-                android:id="@+id/addProfileImageView" />
+                android:id="@+id/sessionProfileButton"
+                android:layout_marginBottom="20dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true" />
+
         </RelativeLayout>
 
-        <TextView
-            android:text="Username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/usernameProfileText"
-            android:layout_gravity="center_horizontal"
-            android:textSize="18sp"
-            android:layout_marginTop="20dp" />
-
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:weightSum="1"
-            android:layout_marginTop="20dp">
+            android:layout_height="match_parent"
+            android:id="@+id/profileLayout">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    app:srcCompat="@drawable/default_user"
+                    android:id="@+id/profileImageView"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_add_circle_black_24dp"
+                    android:id="@+id/addProfileImageView"
+                    android:layout_alignParentBottom="true" />
+            </RelativeLayout>
+
+            <TextView
+                android:text="Username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/usernameProfileText"
+                android:layout_gravity="center_horizontal"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="1"
+                android:layout_marginTop="20dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/nameProfileEditText"
+                    android:layout_weight="0.4"
+                    android:hint="@string/name"
+                    android:layout_marginRight="10dp" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:ems="10"
+                    android:id="@+id/surnameProfileEditText"
+                    android:layout_weight="0.6"
+                    android:hint="@string/surname"
+                    android:layout_marginLeft="10dp" />
+            </LinearLayout>
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 android:ems="10"
-                android:id="@+id/nameProfileEditText"
-                android:layout_weight="0.4"
-                android:hint="@string/name" />
+                android:id="@+id/emailProfileEditText"
+                android:hint="@string/email"
+                android:layout_margin="20dp" />
 
             <EditText
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
+                android:inputType="textPassword"
                 android:ems="10"
-                android:id="@+id/surnameProfileEditText"
-                android:layout_weight="0.6"
-                android:hint="@string/surname" />
+                android:id="@+id/passwordProfileEditText"
+                android:hint="@string/password"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp" />
+
+            <Switch
+                android:text="@string/receive_notifications"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/notificationsSwitch"
+                android:textSize="18sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp">
+
+                <Button
+                    android:text="@string/close_session"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/logoutButton"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp" />
+
+                <Button
+                    android:text="@string/remove_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/removeUserButton"
+                    android:layout_weight="1"
+                    android:layout_marginLeft="10dp" />
+            </LinearLayout>
         </LinearLayout>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:ems="10"
-            android:id="@+id/emailProfileEditText"
-            android:hint="@string/email" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:ems="10"
-            android:id="@+id/passwordProfileEditText"
-            android:hint="@string/password" />
-
-        <Switch
-            android:text="@string/receive_notifications"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/notificationsSwitch"
-            android:textSize="18sp" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:text="@string/close_session"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/logoutButton"
-                android:layout_weight="1" />
-
-            <Button
-                android:text="@string/remove_user"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/removeUserButton"
-                android:layout_weight="1" />
-        </LinearLayout>
-    </LinearLayout>
-
-</FrameLayout>
+    </FrameLayout>
+</ScrollView>

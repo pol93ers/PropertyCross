@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import java.net.URL;
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.ui.activities.LoginActivity;
 import mdpa.lasalle.propertycross.util.FacebookUserData;
 
 
@@ -82,6 +84,11 @@ public class SessionFragment extends FragmentBase implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.init_session);
+        ((LoginActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((LoginActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+
         View root = inflater.inflate(R.layout.fragment_session, container, false);
 
         fbLoginButton = (LoginButton) root.findViewById(R.id.facebookLoginButton);
@@ -203,6 +210,15 @@ public class SessionFragment extends FragmentBase implements
         }
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
 }

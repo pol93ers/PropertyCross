@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
+import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 
 public class FavouritesFragment extends FragmentBase{
 
@@ -28,6 +30,8 @@ public class FavouritesFragment extends FragmentBase{
     private Button sessionFavouritesButton;
     private TextView numFavouritesTextView;
     private RecyclerView favouritesRecyclerView;
+
+    private AdapterRecyclerMain adapter;
 
     private OnLoginActivityListener loginActivityListener;
     public interface OnLoginActivityListener {
@@ -59,6 +63,8 @@ public class FavouritesFragment extends FragmentBase{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.favourites);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_main_favourites, container, false);
@@ -68,6 +74,11 @@ public class FavouritesFragment extends FragmentBase{
         sessionFavouritesButton = (Button) root.findViewById(R.id.sessionFavouritesButton);
         numFavouritesTextView = (TextView) root.findViewById(R.id.numberPropertiesFavourites);
         favouritesRecyclerView = (RecyclerView) root.findViewById(R.id.recyclerFavourites);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        favouritesRecyclerView.setLayoutManager(linearLayoutManager);
+
+        adapter = new AdapterRecyclerMain(getContext());
 
         setListeners();
 
@@ -87,7 +98,6 @@ public class FavouritesFragment extends FragmentBase{
     }
 
     private void setListeners(){
-
         sessionFavouritesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

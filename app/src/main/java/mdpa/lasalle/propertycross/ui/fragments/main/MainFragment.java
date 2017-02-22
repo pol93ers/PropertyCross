@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
+import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 import mdpa.lasalle.propertycross.util.Component;
 
 public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
@@ -29,6 +31,8 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     private FloatingActionButton searchFAB;
     private RecyclerView recyclerProperties;
     private TextView numberPropertiesText;
+
+    private AdapterRecyclerMain adapter;
 
     @NonNull @Override
     public ID getComponent() {
@@ -38,6 +42,11 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     private OnSearchFragmentListener searchFragmentListener;
     public interface OnSearchFragmentListener {
         void onSearchFragment();
+    }
+
+    private OnPropertyFragmentListener propertyFragmentListener;
+    public interface OnPropertyFragmentListener {
+        void onPropertyFragment();
     }
 
     public static MainFragment newInstance() {
@@ -50,32 +59,35 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        searchFragmentListener = onAttachGetListener(OnSearchFragmentListener.class, context);
+        propertyFragmentListener = onAttachGetListener(OnPropertyFragmentListener.class, context);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.properties);
+        ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
         setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_main_properties, container, false);
 
         searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
-        recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
         numberPropertiesText = (TextView) root.findViewById(R.id.numberProperties);
+        recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerProperties.setLayoutManager(linearLayoutManager);
+
+        adapter = new AdapterRecyclerMain(getContext(), propertyFragmentListener);
+        recyclerProperties.setAdapter(adapter);
 
         setListeners();
 
         return root;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        searchFragmentListener = onAttachGetListener(OnSearchFragmentListener.class, context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        searchFragmentListener = null;
     }
 
     @Override
