@@ -22,6 +22,7 @@ import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
+import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 
 public class FavouritesFragment extends FragmentBase{
@@ -31,11 +32,16 @@ public class FavouritesFragment extends FragmentBase{
     private TextView numFavouritesTextView;
     private RecyclerView favouritesRecyclerView;
 
-    private AdapterRecyclerMain adapter;
+    private AdapterRecyclerFavourites adapter;
 
     private OnLoginActivityListener loginActivityListener;
     public interface OnLoginActivityListener {
         void onLoginActivity();
+    }
+
+    private OnPropertyFragmentListener propertyFragmentListener;
+    public interface OnPropertyFragmentListener {
+        void onPropertyFragment();
     }
 
     @NonNull
@@ -52,6 +58,7 @@ public class FavouritesFragment extends FragmentBase{
     public void onAttach(Context context) {
         super.onAttach(context);
         loginActivityListener = onAttachGetListener(OnLoginActivityListener.class, context);
+        propertyFragmentListener = onAttachGetListener(OnPropertyFragmentListener.class, context);
     }
 
     @Override
@@ -78,7 +85,7 @@ public class FavouritesFragment extends FragmentBase{
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         favouritesRecyclerView.setLayoutManager(linearLayoutManager);
 
-        adapter = new AdapterRecyclerMain(getContext());
+        adapter = new AdapterRecyclerFavourites(getContext(), propertyFragmentListener);
 
         setListeners();
 
