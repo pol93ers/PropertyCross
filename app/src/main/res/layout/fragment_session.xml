@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/barcelona" />
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp">
+        android:layout_marginBottom="40dp"
+        android:orientation="vertical">
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/facebookLoginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:paddingTop="20dp"
             android:paddingBottom="20dp"
             android:paddingLeft="20dp"
             android:paddingRight="20dp"
+            android:paddingTop="20dp"
             android:textSize="18sp" />
 
         <TextView
-            android:text="@string/login"
+            android:id="@+id/loginSessionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/loginSessionText"
-            android:padding="20dp"
-            android:gravity="center_horizontal"
             android:layout_marginBottom="20dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/white_transparent"
+            android:gravity="center_horizontal"
+            android:padding="20dp"
+            android:text="@string/login"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="normal|bold" />
 
         <TextView
-            android:text="@string/sign_up"
+            android:id="@+id/signupSessionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/signupSessionText"
+            android:background="@color/white_transparent"
             android:gravity="center_horizontal"
             android:padding="20dp"
-            android:background="@android:color/darker_gray"
+            android:text="@string/sign_up"
+            android:textColor="@android:color/white"
             android:textSize="18sp"
             android:textStyle="normal|bold" />
     </LinearLayout>
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
 
 
 </FrameLayout>

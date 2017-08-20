@@ -11,66 +11,84 @@
         android:layout_marginTop="20dp">
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:srcCompat="@drawable/default_user"
-            android:id="@+id/signUpImage" />
+            android:id="@+id/signUpImage"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            app:srcCompat="@drawable/default_user" />
 
         <ImageView
+            android:id="@+id/addSignUpImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_input_add"
-            android:id="@+id/addSignUpImage"
-            android:layout_gravity="bottom|right" />
+            android:layout_gravity="bottom|right"
+            android:src="@drawable/ic_select_photo_profile" />
     </FrameLayout>
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
         android:id="@+id/emailSignUpEditText"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginStart="40dp"
-        android:hint="@string/email" />
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/white_transparent"
         android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
+
+    <EditText
         android:id="@+id/nameSignUpEditText"
-        android:hint="@string/name"
-        android:layout_marginEnd="40dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp" />
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/surnameSignUpEditText"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="40dp"
-        android:hint="@string/surname" />
+        android:layout_marginTop="30dp"
+        android:background="@color/white_transparent"
+        android:ems="10"
+        android:hint="@string/name"
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
+
+    <EditText
+        android:id="@+id/surnameSignUpEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="30dp"
+        android:background="@color/white_transparent"
+        android:ems="10"
+        android:hint="@string/surname"
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <Switch
-        android:text="@string/receive_notifications"
+        android:id="@+id/notificationsSignUpSwitch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/notificationsSignUpSwitch"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:text="@string/receive_notifications"
+        android:textColor="@android:color/white" />
 
     <Button
-        android:text="@string/sign_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/signUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp" />
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/sign_up"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp" />
 </LinearLayout>

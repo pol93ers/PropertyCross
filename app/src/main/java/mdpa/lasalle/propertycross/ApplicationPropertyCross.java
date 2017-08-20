@@ -7,6 +7,7 @@ import com.facebook.appevents.AppEventsLogger;
 
 import mdpa.lasalle.propertycross.base.app.ApplicationBase;
 import mdpa.lasalle.propertycross.data.AppPreferences;
+import mdpa.lasalle.propertycross.http.Http;
 
 public class ApplicationPropertyCross extends ApplicationBase{
     @NonNull
@@ -34,6 +35,9 @@ public class ApplicationPropertyCross extends ApplicationBase{
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
+
+        Http.getInstance().initClient(Http.AuthType.NONE);
+        Http.getInstance().initContext(this);
     }
 
     public AppPreferences preferences() {

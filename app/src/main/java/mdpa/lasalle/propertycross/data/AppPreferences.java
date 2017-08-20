@@ -8,11 +8,12 @@ public class AppPreferences extends PreferencesBase{
     private enum PREFERENCE {
         USER_ID("user_id"),
         USER_EMAIL("user_email"),
-        USER_PASSWORD("user_password"),
 
         LOGIN_API_KEY("login_api_key"),
 
         DEVICE_TOKEN("device_token"),
+
+        LAST_SEARCHES("last_searches"),
         ;
 
         private final String val;
@@ -31,12 +32,12 @@ public class AppPreferences extends PreferencesBase{
         super(context, TAG, VERSION);
     }
 
-    public boolean setUserId(@Nullable int userId) {
-        return putInt(PREFERENCE.USER_ID.val(), userId);
+    public boolean setUserId(@Nullable String userId) {
+        return putString(PREFERENCE.USER_ID.val(), userId);
     }
 
-    public @Nullable int getUserId() {
-        return getInt(PREFERENCE.USER_ID.val(), 0);
+    public @Nullable String getUserId() {
+        return getString(PREFERENCE.USER_ID.val(), null);
     }
 
 
@@ -48,19 +49,10 @@ public class AppPreferences extends PreferencesBase{
         return getString(PREFERENCE.USER_EMAIL.val(), null);
     }
 
-
-    public boolean setUserPassword(@Nullable String userPass) {
-        return putString(PREFERENCE.USER_PASSWORD.val(), userPass);
-    }
-
-    public @Nullable String getUserPassword() {
-        return getString(PREFERENCE.USER_PASSWORD.val(), null);
-    }
-
     public void removeUser() {
-        setUserId(0);
+        setUserId(null);
         setUserEmail(null);
-        setUserPassword(null);
+        setLoginApiKey(null);
     }
 
     public boolean setLoginApiKey(@Nullable String loginKey) {
@@ -81,5 +73,13 @@ public class AppPreferences extends PreferencesBase{
 
     public @Nullable String getDeviceToken() {
         return getString(PREFERENCE.DEVICE_TOKEN.val(), null);
+    }
+
+    public boolean setLastSearches(@Nullable String lastSearches) {
+        return putString(PREFERENCE.LAST_SEARCHES.val(), lastSearches);
+    }
+
+    public @Nullable String getLastSearches() {
+        return getString(PREFERENCE.LAST_SEARCHES.val(), null);
     }
 }

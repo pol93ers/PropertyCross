@@ -9,13 +9,14 @@ public interface Component {
         SplashActivity("SplashActivity"),
         MainActivity("MainActivity"),
         LoginActivity("LoginActivity"),
+        SearchActivity("SearchActivity"),
+        LastSearchsActivity("LastSearchActivity"),
 
         MainFragment("MainFragment"),
         MapLandscapeFragment("MapLandscapeFragment"),
         FavouritesFragment("FavouritesFragment"),
         ProfileFragment("ProfileFragment"),
         MapFragment("MapFragment"),
-        SearchFragment("SearchFragment"),
         PropertyFragment("PropertyFragment"),
         CommentFragment("CommentFragment"),
 
@@ -23,7 +24,14 @@ public interface Component {
         LoginFragment("LoginFragment"),
         SignUpFragment("SignUpFragment"),
 
-        AdapterRecyclerMain("AdapterRecyclerMain")
+        SearchFragment("SearchFragment"),
+
+        LastSearchesFragment("LastSearchesFragment"),
+
+        AdapterRecyclerMain("AdapterRecyclerMain"),
+        AdapterRecyclerFavourites("AdapterRecyclerFavourites"),
+        AdapterRecyclerComments("AdapterRecyclerComments"),
+        AdapterLastSearches("AdapterLastSearches"),
         ;
 
         private String id;

@@ -16,8 +16,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -29,6 +29,10 @@ import java.io.IOException;
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.util.CircleTransform;
 import mdpa.lasalle.propertycross.util.ImageChooser;
@@ -39,7 +43,7 @@ public class ProfileFragment extends FragmentBase{
     private TextView usernameTextView;
     private ImageView profileImageView, addProfileImageView;
     private RelativeLayout noSessionProfileLayout;
-    private LinearLayout profileLayout;
+    private ScrollView profileLayout;
     private Switch receiveNotificationsSwitch;
     private Button logoutButton, removeUserButton, sessionProfileButton;
 
@@ -69,6 +73,7 @@ public class ProfileFragment extends FragmentBase{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_USER);
     }
 
     @Override
@@ -93,7 +98,7 @@ public class ProfileFragment extends FragmentBase{
         profileImageView = (ImageView) root.findViewById(R.id.profileImageView);
         addProfileImageView = (ImageView) root.findViewById(R.id.addProfileImageView);
         noSessionProfileLayout = (RelativeLayout) root.findViewById(R.id.noSessionProfileLayout);
-        profileLayout = (LinearLayout) root.findViewById(R.id.profileLayout);
+        profileLayout = (ScrollView) root.findViewById(R.id.profileLayout);
         sessionProfileButton = (Button) root.findViewById(R.id.sessionProfileButton);
 
         setListeners();
@@ -107,6 +112,15 @@ public class ProfileFragment extends FragmentBase{
         if(ApplicationPropertyCross.getInstance().preferences().getLoginApiKey() != null){
             noSessionProfileLayout.setVisibility(View.GONE);
             profileLayout.setVisibility(View.VISIBLE);
+
+            getHttpManager().callStart(
+                    Http.RequestType.GET,
+                    Requests.Values.GET_USER,
+                    String.valueOf(ApplicationPropertyCross.getInstance().preferences().getUserId()),
+                    null,
+                    ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                    null
+            );
         }else{
             noSessionProfileLayout.setVisibility(View.VISIBLE);
             profileLayout.setVisibility(View.GONE);
@@ -206,5 +220,22 @@ public class ProfileFragment extends FragmentBase{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.GET_USER.id)) {
+
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.GET_USER.id)) {
+
+        }
     }
 }

@@ -25,19 +25,26 @@ public class MapLandscapeFragment extends FragmentBase implements OnMapReadyCall
     private TextView numPropertiesText, emptyMapText;
     private GoogleMap googleMap;
 
+    private int numberProperties;
+
     @NonNull
     @Override
     public ID getComponent() {
         return ID.MapLandscapeFragment;
     }
 
-    public static MapLandscapeFragment newInstance() {
-        return new MapLandscapeFragment();
+    public static MapLandscapeFragment newInstance(int numberProperties) {
+        MapLandscapeFragment fragment = new MapLandscapeFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("numberProperties",numberProperties);
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        numberProperties = getArguments().getInt("numberProperties");
     }
 
     @Override
@@ -46,6 +53,13 @@ public class MapLandscapeFragment extends FragmentBase implements OnMapReadyCall
         View root = inflater.inflate(R.layout.fragment_map, container, false);
 
         numPropertiesText = (TextView) root.findViewById(R.id.numPropertiesMap);
+        if (numberProperties != 0){
+            numPropertiesText.setText(numberProperties);
+            emptyMapText.setVisibility(View.GONE);
+        }else{
+            numPropertiesText.setVisibility(View.GONE);
+        }
+
         emptyMapText = (TextView) root.findViewById(R.id.emptyMapText);
 
         MapView mapView = (MapView) root.findViewById(R.id.mapView);

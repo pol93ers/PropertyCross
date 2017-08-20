@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
@@ -19,7 +20,8 @@ import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
 public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> extends AdapterRecyclerBase<I, AdapterRecyclerBase.BindableViewHolder<I>>{
 
     private Context context;
-    private MainFragment.OnPropertyFragmentListener listener;
+    private MainFragment.OnFavouriteUpdateListener listener;
+    private MainFragment.OnSessionFragmentListener listenerSession;
 
     @NonNull
     @Override
@@ -27,27 +29,30 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
         return ID.AdapterRecyclerMain;
     }
 
-    public AdapterRecyclerMain(Context context, MainFragment.OnPropertyFragmentListener listener){
+    public AdapterRecyclerMain(Context context, MainFragment.OnFavouriteUpdateListener listener, MainFragment.OnSessionFragmentListener listenerSession){
         this.context = context;
         this.listener = listener;
+        this.listenerSession = listenerSession;
     }
 
     public interface PropertyItem<P extends PropertyItem.Property>{
         @NonNull P getProperty();
 
         interface Property{
+            @NonNull String getId();
             @NonNull Uri getPhoto();
             @NonNull String getAddress();
             @NonNull String getMeters();
             @NonNull String getPrice();
-            @NonNull boolean isFavourite();
-            @NonNull void setFavourite(boolean favourite);
+            @NonNull String getType();
+            boolean isFavourite();
+            void setFavourite(boolean favourite);
         }
     }
 
     @NonNull
     @Override
-    protected BindableViewHolder onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
+    protected BindableViewHolder<I> onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
         return new BindableViewHolder<>(inflater.inflate(R.layout.property_item_view, parent, false));
     }
 
@@ -66,18 +71,17 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
         holder.itemView.findViewById(R.id.propertyFavouriteImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.item.getProperty().setFavourite(!holder.item.getProperty().isFavourite());
-                if(holder.item.getProperty().isFavourite()){
-                    ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
+                if(ApplicationPropertyCross.getInstance().preferences().getLoginApiKey() != null) {
+                    holder.item.getProperty().setFavourite(!holder.item.getProperty().isFavourite());
+                    if (holder.item.getProperty().isFavourite()) {
+                        ((ImageView) holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
+                    } else {
+                        ((ImageView) holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    }
+                    listener.onFavouriteUpdate(holder.item.getProperty().getId(), true);
                 }else{
-                    ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_border_black_24dp);
+                    listenerSession.onLoginActivity();
                 }
-            }
-        });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onPropertyFragment();
             }
         });
     }

@@ -1,5 +1,6 @@
 package mdpa.lasalle.propertycross.util;
 
+import com.facebook.Profile;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.ParseException;
@@ -46,5 +47,9 @@ public class FacebookUserData {
 
     public String getGender() {
         return gender;
+    }
+
+    public static String generatePassword(Profile profile) {
+        return "fbapp" + profile.getId();
     }
 }

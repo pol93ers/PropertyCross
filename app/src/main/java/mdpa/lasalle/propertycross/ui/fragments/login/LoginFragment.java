@@ -1,5 +1,6 @@
 package mdpa.lasalle.propertycross.ui.fragments.login;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,13 +10,22 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.Request;
+import mdpa.lasalle.propertycross.http.project.request.RequestLogin;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 
 public class LoginFragment extends FragmentBase {
 
     private EditText usernameEditText, passwordEditText;
     private Button loginButton;
+    private String username, password;
 
     @NonNull
     @Override
@@ -29,7 +39,7 @@ public class LoginFragment extends FragmentBase {
 
     private OnLoginListener loginListener;
     public interface OnLoginListener{
-        void onLogin(String username, String password);
+        void onLogin(String username, String userID, String authToken);
     }
 
     @Override
@@ -41,6 +51,7 @@ public class LoginFragment extends FragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_LOGIN);
     }
 
     @Override
@@ -62,9 +73,23 @@ public class LoginFragment extends FragmentBase {
             @Override
             public void onClick(View view) {
                 if(!isEmpty(usernameEditText) && !isEmpty(passwordEditText)){
-                    loginListener.onLogin(usernameEditText.getText().toString(), passwordEditText.getText().toString());
+                    username = usernameEditText.getText().toString();
+                    password = passwordEditText.getText().toString();
+                    getHttpManager().callStart(
+                            Http.RequestType.POST,
+                            Requests.Values.POST_LOGIN,
+                            null,
+                            new RequestLogin(username, password),
+                            null,
+                            null
+                    );
                 }else{
-
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.error);
+                    builder.setMessage(R.string.empty_fields);
+                    builder.setPositiveButton(R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             }
         });
@@ -72,5 +97,34 @@ public class LoginFragment extends FragmentBase {
 
     private boolean isEmpty(EditText editText) {
         return editText.getText().toString().trim().length() == 0;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.error);
+            builder.setMessage(R.string.dialog_title_error_login);
+            builder.setPositiveButton(R.string.ok, null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+            String userID = ((ResponseLogin)response).getLogin().getUserId();
+            String authToken = ((ResponseLogin)response).getLogin().getAuthToken();
+            loginListener.onLogin(username, userID, authToken);
+        }
     }
 }

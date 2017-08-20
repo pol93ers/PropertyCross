@@ -4,75 +4,83 @@
     android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@+id/favouritesLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/noSessionFavouritesLayout"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sesion_favourites"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="20dp"
-            android:gravity="center_horizontal"
-            android:textSize="18sp" />
-
-        <Button
-            android:text="@string/init_session"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sessionFavouritesButton"
-            android:layout_marginBottom="20dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/favouritesLayout">
+        android:visibility="visible">
 
         <android.support.design.widget.TabLayout
+            android:id="@+id/tabFavouritesLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tabFavouritesLayout">
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TabItem
+                android:id="@+id/buyFavouritesTabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/buy"
-                android:id="@+id/buyFavouritesTabItem" />
+                android:text="@string/buy" />
 
             <android.support.design.widget.TabItem
+                android:id="@+id/rentFavouritesTabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/rent"
-                android:id="@+id/rentFavouritesTabItem" />
+                android:text="@string/rent" />
 
         </android.support.design.widget.TabLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_below="@+id/tabFavouritesLayout">
+            android:layout_below="@+id/tabFavouritesLayout"
+            android:orientation="vertical">
 
             <TextView
+                android:id="@+id/numberPropertiesFavourites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/numberPropertiesFavourites"
-                android:text="Hola"
                 android:layout_margin="10dp"
+                android:text="@string/favourites_not_found"
                 android:textStyle="normal|bold" />
 
             <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerFavourites"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/recyclerFavourites" />
+                android:layout_height="match_parent" />
 
         </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/noSessionFavouritesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:gravity="center_horizontal"
+            android:text="@string/sesion_favourites"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/sessionFavouritesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="10dp"
+            android:paddingEnd="40dp"
+            android:paddingStart="40dp"
+            android:paddingTop="10dp"
+            android:text="@string/init_session"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
     </RelativeLayout>
 

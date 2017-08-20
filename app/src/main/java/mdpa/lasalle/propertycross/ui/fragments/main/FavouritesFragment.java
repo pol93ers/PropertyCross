@@ -3,6 +3,7 @@ package mdpa.lasalle.propertycross.ui.fragments.main;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,14 +19,25 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
+import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.data.Property;
+import mdpa.lasalle.propertycross.data.adapter.PropertyFavouriteItem;
+import mdpa.lasalle.propertycross.data.adapter.PropertyItem;
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseProperties;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 
-public class FavouritesFragment extends FragmentBase{
+public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
 
     private RelativeLayout noSessionFavouritesLayout, favouritesLayout;
     private Button sessionFavouritesButton;
@@ -33,6 +45,9 @@ public class FavouritesFragment extends FragmentBase{
     private RecyclerView favouritesRecyclerView;
 
     private AdapterRecyclerFavourites adapter;
+    private ArrayList<Property> properties;
+    private ArrayList<PropertyFavouriteItem> propertyItems = new ArrayList<>();
+    private String idProperty;
 
     private OnLoginActivityListener loginActivityListener;
     public interface OnLoginActivityListener {
@@ -41,7 +56,12 @@ public class FavouritesFragment extends FragmentBase{
 
     private OnPropertyFragmentListener propertyFragmentListener;
     public interface OnPropertyFragmentListener {
-        void onPropertyFragment();
+        void onPropertyFragment(String idProperty);
+    }
+
+    private OnFavouriteUpdateListener favouriteUpdateListener;
+    public interface OnFavouriteUpdateListener {
+        void onFavouriteUpdate(String idProperty, boolean isMain);
     }
 
     @NonNull
@@ -59,11 +79,14 @@ public class FavouritesFragment extends FragmentBase{
         super.onAttach(context);
         loginActivityListener = onAttachGetListener(OnLoginActivityListener.class, context);
         propertyFragmentListener = onAttachGetListener(OnPropertyFragmentListener.class, context);
+        favouriteUpdateListener = onAttachGetListener(OnFavouriteUpdateListener.class, context);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_FAVOURITES);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.PUT_INC_VIEWS);
     }
 
     @Override
@@ -85,7 +108,8 @@ public class FavouritesFragment extends FragmentBase{
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         favouritesRecyclerView.setLayoutManager(linearLayoutManager);
 
-        adapter = new AdapterRecyclerFavourites(getContext(), propertyFragmentListener);
+        adapter = new AdapterRecyclerFavourites(getContext(), favouriteUpdateListener);
+        favouritesRecyclerView.setAdapter(adapter);
 
         setListeners();
 
@@ -142,5 +166,50 @@ public class FavouritesFragment extends FragmentBase{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
+    }
+
+    @Override
+    public void onItemClick(Object item, int position, View rowView, int viewType) {
+        idProperty = propertyItems.get(position).getProperty().getId();
+        getHttpManager().callStart(
+                Http.RequestType.PUT,
+                Requests.Values.PUT_INC_VIEWS,
+                idProperty,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Override
+    public void onItemLongClick(Object item, int position, View rowView, int viewType) {
+
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
+
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
+            propertyFragmentListener.onPropertyFragment(idProperty);
+        } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)) {
+            properties = ((ResponseProperties) response).getProperties();
+            String numberProperties = properties.size() + getString(R.string.properties);
+            numFavouritesTextView.setText(numberProperties);
+            for (int i=0; i<properties.size();i++){
+                propertyItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
+                        properties.get(i).getCity(), Uri.parse(properties.get(i).getImages().get(0)),
+                        String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()), properties.get(i).getPropertyType())));
+            }
+            adapter.setItems(propertyItems);
+        }
     }
 }

@@ -17,7 +17,8 @@ public class Requests {
     }
 
     public enum Values {
-        POST_LOGIN("postLogin", getApiServerUrl() + "/"),
+        POST_LOGIN("postLogin", getApiServerUrl() + "/login"),
+        GET_USER("getUser", getApiServerUrl() + "/user/"),
         GET_PROPERTIES_TYPE("getPropertiesType", getApiServerUrl() + "/properties"),
         GET_PROPERTIES_LOCATION("getPropertiesLocation", getApiServerUrl() + "/properties"),
         GET_PROPERTY("getProperty", getApiServerUrl() + "/property/"),

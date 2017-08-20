@@ -48,8 +48,8 @@
     <string name="empty_fields">Todos los campos tienen que estar rellenados.</string>
     <string name="select_photo">Seleccionar foto:</string>
     <string name="title_order">Ordenar por</string>
-    <string name="less_more_meters">de menos a más m</string>
-    <string name="more_less_meters">de más a menos m</string>
+    <string name="less_more_meters">de menos a más m2</string>
+    <string name="more_less_meters">de más a menos m2</string>
     <string name="less_more_distance">de menos a más distancia</string>
     <string name="less_more_price">de menos a más precio</string>
     <string name="more_less_price">de más a menos precio</string>
@@ -58,4 +58,13 @@
     <string name="share">Comparte con</string>
     <string name="share_text">Si te gusta Property Cross</string>
     <string name="no_comments">No hay comentarios sobre este immueble</string>
+    <string name="message_error_500">Estamos teniendo problemas internos. Por favor, disculpen las molestias.</string>
+    <string name="dialog_connection_error">Lo sentimos pero no ha sido posible establecer la conexión. Vuelve a intentarlo más tarde, si el problema persiste ponte en contacto con nosotros.</string>
+    <string name="dialog_loading">Cargando…</string>
+    <string name="dialog_title_error_login">El usuario o la contraseña son incorrectos. Por favor vuelve a intentarlo.</string>
+    <string name="permission_reason">%1$s necesita los permisos de %2$s para poder continuar.</string>
+    <string name="permission_reason_denied">%1$s no puede continuar sin los permisos de %2$s.\nPor favor, actívalos en los ajustes de la aplicación.</string>
+    <string name="permission_location">Ubicación</string>
+    <string name="contact_owner">Contactar con el propietario</string>
+    <string name="write_comment">Escribe tu comentario…</string>
 </resources>

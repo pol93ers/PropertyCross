@@ -4,50 +4,70 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="@string/sign_up"
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
         android:layout_gravity="center_horizontal"
-        android:textSize="24sp"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="50dp"
+        android:text="@string/sign_up"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <EditText
+        android:id="@+id/usernameSignUpEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/white_transparent"
         android:hint="@string/user"
-        android:id="@+id/usernameSignUpEditText" />
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <EditText
+        android:id="@+id/passwordSignUpEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/passwordSignUpEditText"
         android:layout_marginEnd="40dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
-        android:hint="@string/password" />
+        android:background="@color/white_transparent"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword"
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <EditText
+        android:id="@+id/repeatPasswordSignUpEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:ems="10"
-        android:id="@+id/repeatPasswordSignUpEditText"
-        android:hint="@string/repeat_password"
-        android:layout_marginTop="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginStart="40dp" />
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/white_transparent"
+        android:ems="10"
+        android:hint="@string/repeat_password"
+        android:inputType="textPassword"
+        android:padding="15dp"
+        android:textColor="@android:color/white"
+        android:textColorHint="@android:color/white" />
 
     <Button
-        android:text="@string/next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/nextSignUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp" />
+        android:layout_marginEnd="40dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/next"
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp" />
 </LinearLayout>

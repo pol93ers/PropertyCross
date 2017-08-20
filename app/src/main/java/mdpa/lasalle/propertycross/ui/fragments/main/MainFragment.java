@@ -1,13 +1,15 @@
 package mdpa.lasalle.propertycross.ui.fragments.main;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,12 +21,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.data.Property;
+import mdpa.lasalle.propertycross.data.adapter.PropertyItem;
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseFavouritesByUser;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
+import mdpa.lasalle.propertycross.ui.activities.SearchActivity;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
-import mdpa.lasalle.propertycross.util.Component;
 
 public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
 
@@ -34,19 +45,31 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
     private AdapterRecyclerMain adapter;
 
+    private final static int RESULT_SEARCH = 1;
+
+    private ArrayList<Property> properties;
+    private ArrayList<PropertyItem> propertyItems = new ArrayList<>();
+    private ArrayList<String> favouritePropertiesIds = new ArrayList<>();
+    private String idProperty;
+
     @NonNull @Override
     public ID getComponent() {
         return ID.MainFragment;
     }
 
-    private OnSearchFragmentListener searchFragmentListener;
-    public interface OnSearchFragmentListener {
-        void onSearchFragment();
-    }
-
     private OnPropertyFragmentListener propertyFragmentListener;
     public interface OnPropertyFragmentListener {
-        void onPropertyFragment();
+        void onPropertyFragment(String idProperty);
+    }
+
+    private OnFavouriteUpdateListener favouriteUpdateListener;
+    public interface OnFavouriteUpdateListener {
+        void onFavouriteUpdate(String idProperty, boolean isMain);
+    }
+
+    private OnSessionFragmentListener sessionFragmentListener;
+    public interface OnSessionFragmentListener {
+        void onLoginActivity();
     }
 
     public static MainFragment newInstance() {
@@ -56,18 +79,29 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.PUT_INC_VIEWS);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_ID_FAVOURITES);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        searchFragmentListener = onAttachGetListener(OnSearchFragmentListener.class, context);
         propertyFragmentListener = onAttachGetListener(OnPropertyFragmentListener.class, context);
+        favouriteUpdateListener = onAttachGetListener(OnFavouriteUpdateListener.class, context);
+        sessionFragmentListener = onAttachGetListener(OnSessionFragmentListener.class, context);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        assert ((MainActivity)getActivity()).getSupportActionBar() != null;
         ((MainActivity)getActivity()).getSupportActionBar().setTitle(R.string.properties);
         ((MainActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((MainActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
@@ -82,7 +116,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerProperties.setLayoutManager(linearLayoutManager);
 
-        adapter = new AdapterRecyclerMain(getContext(), propertyFragmentListener);
+        adapter = new AdapterRecyclerMain(getContext(), favouriteUpdateListener, sessionFragmentListener);
         recyclerProperties.setAdapter(adapter);
 
         setListeners();
@@ -120,18 +154,84 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
         searchFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                searchFragmentListener.onSearchFragment();
+                startActivityForResult(SearchActivity.newStartIntent(getContext()), RESULT_SEARCH);
             }
         });
     }
 
     @Override
-    public void onItemClick(Object item, int position, View rowView, int viewType) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RESULT_SEARCH:
+                if (resultCode == Activity.RESULT_OK) {
+                    properties = (ArrayList<Property>) data.getSerializableExtra("properties");
+                    String numberProperties = properties.size() + getString(R.string.properties);
+                    numberPropertiesText.setText(numberProperties);
+                    for (int i=0;i<properties.size();i++) {
+                        boolean isFavourite = false;
+                        for (int j=0;j<favouritePropertiesIds.size();j++){
+                            if (properties.get(i).getId().equals(favouritePropertiesIds.get(j))){
+                                isFavourite = true;
+                                break;
+                            }
+                        }
+                        propertyItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
+                                properties.get(i).getCity(), Uri.parse(properties.get(i).getImages().get(0)),
+                                String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
+                                properties.get(i).getPropertyType(), isFavourite)));
+                    }
+                    adapter.setItems(propertyItems);
+                }
+                break;
+        }
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Log.e("Hola", "VERTICAL");
+        }else{
+            Log.e("Hola", "HORITZONTAL");
+        }
+    }
+
+    @Override
+    public void onItemClick(Object item, int position, View rowView, int viewType) {
+        idProperty = propertyItems.get(position).getProperty().getId();
+        getHttpManager().callStart(
+                Http.RequestType.PUT,
+                Requests.Values.PUT_INC_VIEWS,
+                idProperty,
+                null,
+                null,
+                null
+        );
     }
 
     @Override
     public void onItemLongClick(Object item, int position, View rowView, int viewType) {
 
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
+
+        } else if(requestId.equals(Requests.Values.GET_ID_FAVOURITES.id)){
+
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
+            propertyFragmentListener.onPropertyFragment(idProperty);
+        } else if(requestId.equals(Requests.Values.GET_ID_FAVOURITES.id)){
+            favouritePropertiesIds = ((ResponseFavouritesByUser) response).getFavouritesByUser().getFavourites();
+        }
     }
 }

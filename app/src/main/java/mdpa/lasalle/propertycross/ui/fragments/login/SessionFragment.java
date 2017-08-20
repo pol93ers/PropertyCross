@@ -1,5 +1,7 @@
 package mdpa.lasalle.propertycross.ui.fragments.login;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +39,12 @@ import java.net.URL;
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestLogin;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 import mdpa.lasalle.propertycross.ui.activities.LoginActivity;
 import mdpa.lasalle.propertycross.util.FacebookUserData;
 
@@ -47,6 +55,8 @@ public class SessionFragment extends FragmentBase implements
     private TextView loginSessionText, signupSessionText;
     private CallbackManager fbCallbackManager;
     private LoginButton fbLoginButton;
+
+    private String username, password;
 
     @NonNull
     @Override
@@ -68,26 +78,35 @@ public class SessionFragment extends FragmentBase implements
         void onSignUpFragment();
     }
 
+    private OnLoginListener loginListener;
+    public interface OnLoginListener{
+        void onLogin(String username, String userID, String authToken);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         loginFragmentListener = onAttachGetListener(OnLoginFragmentListener.class, context);
         signUpFragmentListener = onAttachGetListener(OnSignUpFragmentListener.class, context);
+        loginListener = onAttachGetListener(OnLoginListener.class, context);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fbCallbackManager = CallbackManager.Factory.create();
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_LOGIN);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        ((LoginActivity)getActivity()).getSupportActionBar().setTitle(R.string.init_session);
-        ((LoginActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((LoginActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         View root = inflater.inflate(R.layout.fragment_session, container, false);
 
@@ -126,20 +145,21 @@ public class SessionFragment extends FragmentBase implements
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        fbCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if (!fbCallbackManager.onActivityResult(requestCode, resultCode, data)) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
     public void onSuccess(LoginResult loginResult) {
 
-        /*GraphRequest request = GraphRequest.newMeRequest(
-                AccessToken.getCurrentAccessToken(), graphRegisterCallback
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(), graphLoginCallback
         );
         Bundle params = new Bundle();
-        params.putString("fields", "id,first_name,last_name,email");
+        params.putString("fields", "id, email");
         request.setParameters(params);
-        request.executeAsync();*/
+        request.executeAsync();
     }
 
     @Override
@@ -159,8 +179,6 @@ public class SessionFragment extends FragmentBase implements
                 final FacebookUserData fbData = new Gson().fromJson(
                         response.getRawResponse(), FacebookUserData.class);
 
-
-
                 new LoadFacebookPictureBitmap2Base64(){
                     @Override
                     protected void onPostExecute(String base64image) {
@@ -179,6 +197,18 @@ public class SessionFragment extends FragmentBase implements
         public void onCompleted(JSONObject object, GraphResponse response) {
             FacebookUserData fbData = new Gson().fromJson(
                     response.getRawResponse(), FacebookUserData.class);
+
+            username = fbData.getEmail();
+            password = FacebookUserData.generatePassword(Profile.getCurrentProfile());
+
+            getHttpManager().callStart(
+                    Http.RequestType.POST,
+                    Requests.Values.POST_LOGIN,
+                    null,
+                    new RequestLogin(username, password),
+                    null,
+                    null
+            );
         }
     };
 
@@ -218,6 +248,29 @@ public class SessionFragment extends FragmentBase implements
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.error);
+            builder.setMessage(R.string.dialog_title_error_login);
+            builder.setPositiveButton(R.string.ok, null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+            String userID = ((ResponseLogin)response).getLogin().getUserId();
+            String authToken = ((ResponseLogin)response).getLogin().getAuthToken();
+            loginListener.onLogin(username, userID, authToken);
         }
     }
 

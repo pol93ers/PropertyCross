@@ -1,45 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
+        android:id="@+id/noSessionProfileLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:visibility="visible">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/noSessionProfileLayout"
-            android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:gravity="center_horizontal"
+            android:text="@string/sesion_profile"
+            android:textSize="18sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/sesion_profile"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="20dp"
-                android:gravity="center_horizontal"
-                android:textSize="18sp" />
+        <Button
+            android:id="@+id/sessionProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="10dp"
+            android:paddingEnd="40dp"
+            android:paddingStart="40dp"
+            android:paddingTop="10dp"
+            android:text="@string/init_session"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
-            <Button
-                android:text="@string/init_session"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/sessionProfileButton"
-                android:layout_marginBottom="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true" />
+    </RelativeLayout>
 
-        </RelativeLayout>
+    <ScrollView
+        android:id="@+id/profileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/profileLayout">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -48,110 +57,110 @@
                 android:layout_marginTop="20dp">
 
                 <ImageView
-                    app:srcCompat="@drawable/default_user"
                     android:id="@+id/profileImageView"
                     android:layout_width="130dp"
-                    android:layout_height="130dp" />
+                    android:layout_height="130dp"
+                    app:srcCompat="@drawable/default_user" />
 
                 <ImageView
+                    android:id="@+id/addProfileImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_add_circle_black_24dp"
-                    android:id="@+id/addProfileImageView"
-                    android:layout_alignParentBottom="true" />
+                    android:layout_alignParentBottom="true"
+                    app:srcCompat="@drawable/ic_add_circle_black_24dp" />
             </RelativeLayout>
 
             <TextView
-                android:text="Username"
+                android:id="@+id/usernameProfileText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/usernameProfileText"
                 android:layout_gravity="center_horizontal"
-                android:textSize="18sp"
-                android:layout_marginTop="20dp" />
+                android:layout_marginTop="20dp"
+                android:text="Username"
+                android:textSize="18sp" />
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="1"
                 android:layout_marginTop="20dp"
+                android:orientation="horizontal"
                 android:paddingLeft="20dp"
-                android:paddingRight="20dp">
+                android:paddingRight="20dp"
+                android:weightSum="1">
 
                 <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:ems="10"
                     android:id="@+id/nameProfileEditText"
-                    android:layout_weight="0.4"
-                    android:hint="@string/name"
-                    android:layout_marginRight="10dp" />
-
-                <EditText
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.4"
                     android:ems="10"
+                    android:hint="@string/name"
+                    android:inputType="textPersonName" />
+
+                <EditText
                     android:id="@+id/surnameProfileEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
                     android:layout_weight="0.6"
+                    android:ems="10"
                     android:hint="@string/surname"
-                    android:layout_marginLeft="10dp" />
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
             <EditText
+                android:id="@+id/emailProfileEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
+                android:layout_margin="20dp"
                 android:ems="10"
-                android:id="@+id/emailProfileEditText"
                 android:hint="@string/email"
-                android:layout_margin="20dp" />
+                android:inputType="textEmailAddress" />
 
             <EditText
+                android:id="@+id/passwordProfileEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:ems="10"
-                android:id="@+id/passwordProfileEditText"
-                android:hint="@string/password"
+                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp" />
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword" />
 
             <Switch
-                android:text="@string/receive_notifications"
+                android:id="@+id/notificationsSwitch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/notificationsSwitch"
-                android:textSize="18sp"
-                android:layout_marginTop="20dp"
                 android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp" />
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/receive_notifications"
+                android:textSize="18sp" />
 
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp">
+                android:layout_margin="20dp"
+                android:orientation="horizontal">
 
                 <Button
-                    android:text="@string/close_session"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/logoutButton"
-                    android:layout_weight="1"
-                    android:layout_marginRight="10dp" />
-
-                <Button
-                    android:text="@string/remove_user"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/removeUserButton"
+                    android:layout_marginRight="10dp"
                     android:layout_weight="1"
-                    android:layout_marginLeft="10dp" />
+                    android:text="@string/close_session" />
+
+                <Button
+                    android:id="@+id/removeUserButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1"
+                    android:text="@string/remove_user" />
             </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 
-    </FrameLayout>
-</ScrollView>
+</FrameLayout>

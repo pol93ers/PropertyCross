@@ -18,15 +18,15 @@ import mdpa.lasalle.propertycross.ui.fragments.main.FavouritesFragment;
 public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.PropertyItem> extends AdapterRecyclerBase<I, AdapterRecyclerBase.BindableViewHolder<I>>{
 
     private Context context;
-    private FavouritesFragment.OnPropertyFragmentListener listener;
+    private FavouritesFragment.OnFavouriteUpdateListener listener;
 
     @NonNull
     @Override
     public ID getComponent() {
-        return ID.AdapterRecyclerMain;
+        return ID.AdapterRecyclerFavourites;
     }
 
-    public AdapterRecyclerFavourites(Context context, FavouritesFragment.OnPropertyFragmentListener listener){
+    public AdapterRecyclerFavourites(Context context, FavouritesFragment.OnFavouriteUpdateListener listener){
         this.context = context;
         this.listener = listener;
     }
@@ -35,19 +35,18 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
         @NonNull P getProperty();
 
         interface Property{
-            @NonNull
-            Uri getPhoto();
+            @NonNull Uri getPhoto();
+            @NonNull String getId();
             @NonNull String getAddress();
             @NonNull String getMeters();
             @NonNull String getPrice();
-            @NonNull boolean isFavourite();
-            @NonNull void setFavourite(boolean favourite);
+            @NonNull String getType();
         }
     }
 
     @NonNull
     @Override
-    protected BindableViewHolder onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
+    protected BindableViewHolder<I> onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
         return new BindableViewHolder<>(inflater.inflate(R.layout.property_item_view, parent, false));
     }
 
@@ -58,26 +57,13 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
         ((TextView)holder.itemView.findViewById(R.id.propertyAddressText)).setText(holder.item.getProperty().getAddress());
         ((TextView)holder.itemView.findViewById(R.id.propertyMetersText)).setText(holder.item.getProperty().getMeters());
         ((TextView)holder.itemView.findViewById(R.id.propertyPriceText)).setText(holder.item.getProperty().getPrice());
-        if(holder.item.getProperty().isFavourite()){
-            ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
-        }else{
-            ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_border_black_24dp);
-        }
+        ((TextView)holder.itemView.findViewById(R.id.propertyTypeText)).setText(holder.item.getProperty().getType());
+        ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
+
         holder.itemView.findViewById(R.id.propertyFavouriteImage).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.item.getProperty().setFavourite(!holder.item.getProperty().isFavourite());
-                if(holder.item.getProperty().isFavourite()){
-                    ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
-                }else{
-                    ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_border_black_24dp);
-                }
-            }
-        });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                listener.onPropertyFragment();
+                listener.onFavouriteUpdate(holder.item.getProperty().getId(), false);
             }
         });
     }

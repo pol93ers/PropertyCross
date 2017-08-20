@@ -11,13 +11,19 @@ import android.support.v7.app.AlertDialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import mdpa.lasalle.propertycross.base.activity.ActivityBase;
+import mdpa.lasalle.propertycross.http.HttpBroadcastManager;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.util.Component;
 import mdpa.lasalle.propertycross.util.FragmentHelper;
 
-public abstract class FragmentBase extends Fragment implements Component {
+public abstract class FragmentBase extends Fragment implements Component, HttpBroadcastManager.HttpBroadcastListener {
     protected final String TAG = getComponent().id();
     private FragmentHelper fragmentHelper;
 
+    private HttpBroadcastManager httpManager;
     private List<AlertDialog> dismissibleDialogs;
 
     public FragmentBase() {
@@ -26,6 +32,8 @@ public abstract class FragmentBase extends Fragment implements Component {
 
     private OnFragmentListener listener;
     public interface OnFragmentListener {
+        void onHttpShowProgressDialog(Requests.Values val);
+        void onHttpCancelProgressDialog(Requests.Values val);
         AlertDialog onShowAlertDialog1bt(
                 String title, String message,
                 String positiveString, DialogInterface.OnClickListener positiveListener
@@ -52,6 +60,7 @@ public abstract class FragmentBase extends Fragment implements Component {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fragmentHelper = new FragmentHelper(getChildFragmentManager());
+        httpManager = new HttpBroadcastManager(this);
     }
 
     @CallSuper @Override
@@ -72,8 +81,51 @@ public abstract class FragmentBase extends Fragment implements Component {
         }
     }
 
+    //region HttpCall
+    //----------------------------------------------------------------------------------------------
+
+    public HttpBroadcastManager getHttpManager() {
+        return httpManager;
+    }
+
+    @Override
+    public void onHttpCallStart(String requestId) {
+        ((ActivityBase)getActivity()).onHttpCallStart(requestId);
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        ((ActivityBase)getActivity()).onHttpBroadcastError(requestId, response);
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        ((ActivityBase)getActivity()).onHttpBroadcastSuccess(requestId, response);
+    }
+
+    @Override
+    public void onHttpCallEnd(String requestId) {
+        ((ActivityBase)getActivity()).onHttpCallEnd(requestId);
+    }
+
+    @Override
+    public boolean onCanExecuteBroadcastResponse(String requestId) {
+        return isResumed();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    //endregion HttpCall
+
     //region Dialogs
     //----------------------------------------------------------------------------------------------
+
+    protected void showHttpProgressDialog(Requests.Values val) {
+        listener.onHttpShowProgressDialog(val);
+    }
+
+    protected void cancelHttpProgressDialog(Requests.Values val) {
+        listener.onHttpCancelProgressDialog(val);
+    }
 
     protected AlertDialog showAlertDialog1bt(
             String title, String message,

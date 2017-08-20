@@ -9,10 +9,15 @@ import com.google.gson.JsonSyntaxException;
 
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseComments;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseFavourites;
+import mdpa.lasalle.propertycross.http.project.response.ResponseFavouritesByUser;
+import mdpa.lasalle.propertycross.http.project.response.ResponseGeneric;
 import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 import mdpa.lasalle.propertycross.http.project.response.ResponseProperties;
 import mdpa.lasalle.propertycross.http.project.response.ResponseProperty;
+import mdpa.lasalle.propertycross.http.project.response.ResponseUser;
 
 public class Responses {
 
@@ -39,19 +44,21 @@ public class Responses {
         } else if (requestId.equals(Requests.Values.GET_PROPERTY.id)){
             return getFromBodyJson(httpResponse, ResponseProperty.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_PROPERTY_WITH_COMMENTS.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseProperty.class, requestId);
         } else if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseFavourites.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_ID_FAVOURITES.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseFavouritesByUser.class, requestId);
         } else if (requestId.equals(Requests.Values.PUT_UPDATE_FAVOURITE.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_COMMENTS_PROPERTY.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseComments.class, requestId);
         } else if (requestId.equals(Requests.Values.POST_COMMENTS.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
+        } else if (requestId.equals(Requests.Values.GET_USER.id)){
+            return getFromBodyJson(httpResponse, ResponseUser.class, requestId);
         } else {
             httpResponse.body().close();
             throw new IllegalArgumentException("Response for " + requestId + " not implemented!");
