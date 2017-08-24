@@ -9,14 +9,16 @@ public class PropertyFavouriteItem implements AdapterRecyclerFavourites.Property
 
     public static class Property implements AdapterRecyclerFavourites.PropertyItem.Property {
         private String id, address, price, meters, type;
+        private double distance;
         private Uri uri;
 
-        public Property(@NonNull String id, @NonNull String address, Uri uri, @NonNull String price, @NonNull String meters, @NonNull String type) {
+        public Property(@NonNull String id, @NonNull String address, Uri uri, @NonNull String price, @NonNull String meters, double distance, @NonNull String type) {
             this.id = id;
             this.address = address;
             this.uri = uri;
             this.price = price;
             this.meters = meters;
+            this.distance = distance;
             this.type = type;
         }
 
@@ -48,6 +50,11 @@ public class PropertyFavouriteItem implements AdapterRecyclerFavourites.Property
         @NonNull @Override
         public Uri getPhoto() {
             return uri;
+        }
+
+        @Override
+        public double getDistance() {
+            return distance;
         }
     }
 

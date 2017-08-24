@@ -88,6 +88,8 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="40dp"
         android:background="@color/colorPrimary"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
         android:text="@string/sign_up"
         android:textColor="@color/colorAccent"
         android:textSize="18sp" />

@@ -45,6 +45,7 @@ public class AdapterRecyclerMain<I extends AdapterRecyclerMain.PropertyItem> ext
             @NonNull String getMeters();
             @NonNull String getPrice();
             @NonNull String getType();
+            double getDistance();
             boolean isFavourite();
             void setFavourite(boolean favourite);
         }

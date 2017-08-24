@@ -1,5 +1,6 @@
 package mdpa.lasalle.propertycross.ui.fragments.main;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -8,15 +9,21 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
-import mdpa.lasalle.propertycross.util.Component;
-
+import mdpa.lasalle.propertycross.http.Http;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestAddComment;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 
 public class CommentFragment extends FragmentBase {
 
     private Button addCommentButton;
     private EditText commentEditText;
+
+    private String idProperty;
 
     @NonNull
     @Override
@@ -24,13 +31,25 @@ public class CommentFragment extends FragmentBase {
         return ID.CommentFragment;
     }
 
-    public static CommentFragment newInstance() {
-        return new CommentFragment();
+    public static CommentFragment newInstance(String idProperty) {
+        CommentFragment fragment = new CommentFragment();
+        Bundle args = new Bundle();
+        args.putString("idProperty", idProperty);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_COMMENTS);
+        idProperty = getArguments().getString("idProperty");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
     }
 
     @Override
@@ -52,6 +71,21 @@ public class CommentFragment extends FragmentBase {
             public void onClick(View v) {
                 if(!isEmpty(commentEditText)){
                     String comment = commentEditText.getText().toString();
+                    getHttpManager().callStart(
+                            Http.RequestType.POST,
+                            Requests.Values.POST_COMMENTS,
+                            null,
+                            new RequestAddComment(comment, idProperty),
+                            ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                            null
+                    );
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.error);
+                    builder.setMessage(R.string.empty_fields);
+                    builder.setPositiveButton(R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             }
         });
@@ -59,5 +93,21 @@ public class CommentFragment extends FragmentBase {
 
     private boolean isEmpty(EditText editText) {
         return editText.getText().toString().trim().length() == 0;
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.POST_COMMENTS.id)) {
+
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.POST_COMMENTS.id)) {
+            getActivity().onBackPressed();
+        }
     }
 }

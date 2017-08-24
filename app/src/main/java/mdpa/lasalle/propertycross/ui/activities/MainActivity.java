@@ -101,16 +101,6 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Log.e("Hola", "VERTICAL");
-        }else{
-            Log.e("Hola", "HORITZONTAL");
-        }
-    }
-
-    @Override
     public void onBackPressed() {
         int count = getFragmentManager().getBackStackEntryCount();
 
@@ -151,8 +141,8 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     }
 
     @Override
-    public void onCommentFragment() {
-        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, CommentFragment.newInstance(), true, true);
+    public void onCommentFragment(String idProperty) {
+        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, CommentFragment.newInstance(idProperty), true, true);
     }
 
     @Override

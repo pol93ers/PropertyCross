@@ -104,8 +104,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@color/colorPrimary"
+                android:paddingBottom="15dp"
                 android:paddingEnd="40dp"
                 android:paddingStart="40dp"
+                android:paddingTop="15dp"
                 android:text="@string/view_map"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp" />
@@ -115,21 +117,36 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <Button
                 android:id="@+id/callButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                android:text="@string/call" />
+                android:background="@color/colorPrimary"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/call"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp" />
 
             <Button
                 android:id="@+id/mailButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                android:text="@string/send_email" />
+                android:background="@color/colorPrimary"
+                android:paddingBottom="15dp"
+                android:paddingTop="15dp"
+                android:text="@string/send_email"
+                android:textColor="@color/colorAccent"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <TextView
@@ -166,7 +183,12 @@
             android:layout_marginEnd="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="@string/add_comment" />
+            android:background="@color/colorPrimary"
+            android:paddingBottom="15dp"
+            android:paddingTop="15dp"
+            android:text="@string/add_comment"
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
     </LinearLayout>
 </ScrollView>

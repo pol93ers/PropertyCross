@@ -9,16 +9,18 @@ public class PropertyItem implements AdapterRecyclerMain.PropertyItem<PropertyIt
 
     public static class Property implements AdapterRecyclerMain.PropertyItem.Property {
         private String id, address, price, meters, type;
+        private double distance;
         private Uri uri;
         private boolean isFavourite;
 
-        public Property(@NonNull String id, @NonNull String address, Uri uri, @NonNull String price, @NonNull String meters, @NonNull String type, boolean isFavourite) {
+        public Property(@NonNull String id, @NonNull String address, Uri uri, @NonNull String price, @NonNull String meters, @NonNull String type, double distance, boolean isFavourite) {
             this.id = id;
             this.address = address;
             this.uri = uri;
             this.price = price;
             this.meters = meters;
             this.type = type;
+            this.distance = distance;
             this.isFavourite = isFavourite;
         }
 
@@ -50,6 +52,11 @@ public class PropertyItem implements AdapterRecyclerMain.PropertyItem<PropertyIt
         @NonNull @Override
         public Uri getPhoto() {
             return uri;
+        }
+
+        @Override
+        public double getDistance() {
+            return distance;
         }
 
         @Override

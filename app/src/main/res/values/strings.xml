@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Property Cross</string>
+    <string name="rental" translatable="false">rental</string>
+    <string name="sale" translatable="false">sale</string>
 
     <string name="title_menu_main">Menú principal</string>
     <string name="sign_up">Sign Up</string>

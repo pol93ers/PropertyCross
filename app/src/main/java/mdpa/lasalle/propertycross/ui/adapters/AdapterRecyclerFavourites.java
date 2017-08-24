@@ -40,6 +40,7 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
             @NonNull String getAddress();
             @NonNull String getMeters();
             @NonNull String getPrice();
+            double getDistance();
             @NonNull String getType();
         }
     }

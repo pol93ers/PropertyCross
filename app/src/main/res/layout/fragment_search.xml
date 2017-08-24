@@ -34,10 +34,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
+            android:paddingBottom="15dp"
             android:paddingEnd="40dp"
             android:paddingStart="40dp"
+            android:paddingTop="15dp"
             android:text="@string/buy"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/colorAccent"
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/rentTypeButton"
@@ -45,9 +48,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/bg_border_black"
+            android:paddingBottom="15dp"
             android:paddingEnd="40dp"
             android:paddingStart="40dp"
-            android:text="@string/rent" />
+            android:paddingTop="15dp"
+            android:text="@string/rent"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <Button
@@ -59,8 +65,11 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="40dp"
         android:background="@color/colorPrimary"
+        android:paddingBottom="15dp"
         android:paddingEnd="50dp"
         android:paddingStart="50dp"
+        android:paddingTop="15dp"
         android:text="@string/search"
-        android:textColor="@color/colorAccent" />
+        android:textColor="@color/colorAccent"
+        android:textSize="18sp" />
 </LinearLayout>

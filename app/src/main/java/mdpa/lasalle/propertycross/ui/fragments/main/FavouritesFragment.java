@@ -3,12 +3,14 @@ package mdpa.lasalle.propertycross.ui.fragments.main;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +21,15 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
@@ -37,12 +47,13 @@ import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 
-public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
+public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener, OnMapReadyCallback {
 
     private RelativeLayout noSessionFavouritesLayout, favouritesLayout;
     private Button sessionFavouritesButton;
-    private TextView numFavouritesTextView;
+    private TextView numFavouritesTextView, emptyMapText, numberPropertiesMapText;
     private RecyclerView favouritesRecyclerView;
+    private GoogleMap googleMap;
 
     private AdapterRecyclerFavourites adapter;
     private ArrayList<Property> properties;
@@ -106,14 +117,41 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
         favouritesRecyclerView = (RecyclerView) root.findViewById(R.id.recyclerFavourites);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        favouritesRecyclerView.setLayoutManager(linearLayoutManager);
+        if (favouritesRecyclerView != null) {
+            favouritesRecyclerView.setLayoutManager(linearLayoutManager);
+            adapter = new AdapterRecyclerFavourites(getContext(), favouriteUpdateListener);
+            favouritesRecyclerView.setAdapter(adapter);
+        }else{
+            MapView mapView = (MapView) root.findViewById(R.id.mapView);
+            mapView.getMapAsync(this);
+        }
 
-        adapter = new AdapterRecyclerFavourites(getContext(), favouriteUpdateListener);
-        favouritesRecyclerView.setAdapter(adapter);
+        emptyMapText = (TextView) root.findViewById(R.id.emptyMapText);
+        numberPropertiesMapText = (TextView) root.findViewById(R.id.numPropertiesMap);
 
         setListeners();
 
         return root;
+    }
+
+    @Override
+    public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        try {
+            // Zoom googleMap camera un initial position.
+            googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+                @Override
+                public void onMyLocationChange(Location location) {
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                            location.getLatitude(), location.getLongitude()), 15
+                    ));
+                    googleMap.setOnMyLocationChangeListener(null);
+                }
+            });
+            googleMap.setMyLocationEnabled(true);
+        } catch (SecurityException e) {
+            Log.e(getComponent().toString(), "Error setting location enabled", e);
+        }
     }
 
     @Override
@@ -152,7 +190,48 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                 dialogBuilder.setTitle(getString(R.string.title_order));
                 dialogBuilder.setItems(type_order, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-
+                        switch (item){
+                            case 0:
+                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    @Override
+                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        return Integer.parseInt(p1.getProperty().getMeters()) - Integer.parseInt(p2.getProperty().getMeters());
+                                    }
+                                });
+                                break;
+                            case 1:
+                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    @Override
+                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        return Integer.parseInt(p2.getProperty().getMeters()) - Integer.parseInt(p1.getProperty().getMeters());
+                                    }
+                                });
+                                break;
+                            case 2:
+                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    @Override
+                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        return (int)(p1.getProperty().getDistance() - p2.getProperty().getDistance());
+                                    }
+                                });
+                                break;
+                            case 3:
+                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    @Override
+                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        return Integer.parseInt(p1.getProperty().getPrice()) - Integer.parseInt(p2.getProperty().getPrice());
+                                    }
+                                });
+                                break;
+                            case 4:
+                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    @Override
+                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        return Integer.parseInt(p2.getProperty().getPrice()) - Integer.parseInt(p1.getProperty().getPrice());
+                                    }
+                                });
+                                break;
+                        }
                     }
                 });
                 AlertDialog alertDialogObject = dialogBuilder.create();
@@ -207,7 +286,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
             for (int i=0; i<properties.size();i++){
                 propertyItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
                         properties.get(i).getCity(), Uri.parse(properties.get(i).getImages().get(0)),
-                        String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()), properties.get(i).getPropertyType())));
+                        String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()), properties.get(i).getDistance(), properties.get(i).getPropertyType())));
             }
             adapter.setItems(propertyItems);
         }

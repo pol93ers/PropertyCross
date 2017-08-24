@@ -53,6 +53,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="40dp"
         android:background="@color/colorPrimary"
+        android:paddingBottom="15dp"
+        android:paddingTop="15dp"
         android:text="@string/login"
         android:textColor="@color/colorAccent"
         android:textSize="18sp" />

@@ -13,7 +13,6 @@ public interface Component {
         LastSearchsActivity("LastSearchActivity"),
 
         MainFragment("MainFragment"),
-        MapLandscapeFragment("MapLandscapeFragment"),
         FavouritesFragment("FavouritesFragment"),
         ProfileFragment("ProfileFragment"),
         MapFragment("MapFragment"),

@@ -54,7 +54,7 @@ public class PropertyFragment extends FragmentBase{
 
     private OnCommentFragmentListener commentFragmentListener;
     public interface OnCommentFragmentListener {
-        void onCommentFragment();
+        void onCommentFragment(String idProperty);
     }
 
     @NonNull
@@ -206,7 +206,7 @@ public class PropertyFragment extends FragmentBase{
         addCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commentFragmentListener.onCommentFragment();
+                commentFragmentListener.onCommentFragment(idProperty);
             }
         });
     }
