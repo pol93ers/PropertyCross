@@ -10,25 +10,31 @@ public class Requests {
     }
 
     public static String getBaseServerUrl() {
-        return "http://lmira.lasalle.ovh";
+        return "http://ls25860.lasalle.ovh";
     }
     protected static String getApiServerUrl() {
         return getBaseServerUrl() + "/api";
     }
 
     public enum Values {
+        //Properties
+        POST_COMMENT("postComment", getApiServerUrl() + "/properties/"),
+        POST_INC_VIEWS("postIncViews", getApiServerUrl() + "/properties/"),
+        GET_PROPERTY("getProperty", getApiServerUrl() + "/properties/"),
+        GET_COMMENTS_PROPERTY("getCommentsProperty", getApiServerUrl() + "/properties/"),
+        GET_PROPERTIES("getProperties", getApiServerUrl() + "/properties"),
+
+        //Session
+        DELETE_USER("deleteUser", getApiServerUrl() + "/profile"),
+        GET_USER("getUser", getApiServerUrl() + "/profile/"),
         POST_LOGIN("postLogin", getApiServerUrl() + "/login"),
-        GET_USER("getUser", getApiServerUrl() + "/user/"),
-        GET_PROPERTIES_TYPE("getPropertiesType", getApiServerUrl() + "/properties"),
-        GET_PROPERTIES_LOCATION("getPropertiesLocation", getApiServerUrl() + "/properties"),
-        GET_PROPERTY("getProperty", getApiServerUrl() + "/property/"),
-        GET_PROPERTY_WITH_COMMENTS("getPropertyComments", getApiServerUrl() + "/propertyWithComments/"),
-        PUT_INC_VIEWS("putIncViews", getApiServerUrl() + "/property/incViews/"),
-        GET_FAVOURITES("getFavourites", getApiServerUrl() + "/user/"),
-        GET_ID_FAVOURITES("getIDFavourites", getApiServerUrl() + "/user/"),
-        PUT_UPDATE_FAVOURITE("putUpdateFavourite", getApiServerUrl() + "/user/"),
-        GET_COMMENTS_PROPERTY("getCommentsProperty", getApiServerUrl() + "/comment/byProperty/"),
-        POST_COMMENTS("postComments", getApiServerUrl() + "/comment/");
+        POST_SIGN_UP("postSignUp", getApiServerUrl() + "/signup"),
+        POST_UPDATE_USER("postUpdateUser", getApiServerUrl() + "/profile"),
+
+        //Users
+        POST_ADD_FAVOURITE("postAddFavourite", getApiServerUrl() + "/users/favourites/"),
+        GET_FAVOURITES("getFavourites", getApiServerUrl() + "/users/favourites"),
+        GET_IS_FAVOURITE("getIsFavourites", getApiServerUrl() + "/users/favourites/");
         public final String id;
         public String where;
         Values(String id, String where) {

@@ -1,33 +1,40 @@
 package mdpa.lasalle.propertycross.data;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by Pol on 08/05/2017.
- */
+public class Location implements Serializable {
+    @SerializedName("lat") private double latitude;
+    @SerializedName("lng") private double longitude;
 
-public class Location {
-    private String type;
-    private ArrayList<Double> coordinates;
-
-    public Location(String type, ArrayList<Double> coordinates) {
-        this.type = type;
-        this.coordinates = coordinates;
+    public Location(double latitude, double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
-    public String getType() {
-        return type;
+    public double getLatitude() {
+        return latitude;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
-    public ArrayList<Double> getCoordinates() {
-        return coordinates;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setCoordinates(ArrayList<Double> coordinates) {
-        this.coordinates = coordinates;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }

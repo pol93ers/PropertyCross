@@ -1,14 +1,34 @@
 package mdpa.lasalle.propertycross.data;
 
-public class User {
-    private String name;
-    private String mail;
-    private String phone;
+import com.google.gson.annotations.SerializedName;
 
-    public User(String name, String mail, String phone) {
+import java.io.Serializable;
+
+public class User implements Serializable{
+    @SerializedName("username") private String username;
+    @SerializedName("name") private String name;
+    @SerializedName("surname") private String surname;
+    @SerializedName("password") private String password;
+    @SerializedName("email") private String email;
+    @SerializedName("url_image") private String url_image;
+    @SerializedName("isNotification") private boolean isNotification;
+
+    public User(String username, String name, String surname, String password, String email, String url_image, boolean isNotification) {
+        this.username = username;
         this.name = name;
-        this.mail = mail;
-        this.phone = phone;
+        this.surname = surname;
+        this.password = password;
+        this.email = email;
+        this.url_image = url_image;
+        this.isNotification = isNotification;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -19,19 +39,56 @@ public class User {
         this.name = name;
     }
 
-    public String getMail() {
-        return mail;
+    public String getSurname() {
+        return surname;
     }
 
-    public void setMail(String mail) {
-        this.mail = mail;
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPassword() {
+        return password;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getUrl_image() {
+        return url_image;
+    }
+
+    public void setUrl_image(String url_image) {
+        this.url_image = url_image;
+    }
+
+    public boolean isNotification() {
+        return isNotification;
+    }
+
+    public void setNotification(boolean notification) {
+        isNotification = notification;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", url_image='" + url_image + '\'' +
+                ", isNotification=" + isNotification +
+                '}';
     }
 }

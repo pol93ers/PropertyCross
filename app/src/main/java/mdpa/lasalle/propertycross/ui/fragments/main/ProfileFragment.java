@@ -1,5 +1,6 @@
 package mdpa.lasalle.propertycross.ui.fragments.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,10 +30,13 @@ import java.io.IOException;
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.data.User;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestUpdateUser;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseUser;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.util.CircleTransform;
 import mdpa.lasalle.propertycross.util.ImageChooser;
@@ -46,6 +50,9 @@ public class ProfileFragment extends FragmentBase{
     private ScrollView profileLayout;
     private Switch receiveNotificationsSwitch;
     private Button logoutButton, removeUserButton, sessionProfileButton;
+
+    private String username, name, surname, email, password, url_image;
+    private boolean isNotification;
 
     private static final int SELECT_PICTURE = 1;
 
@@ -74,6 +81,8 @@ public class ProfileFragment extends FragmentBase{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getHttpManager().receiverRegister(getContext(), Requests.Values.GET_USER);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_UPDATE_USER);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.DELETE_USER);
     }
 
     @Override
@@ -116,9 +125,10 @@ public class ProfileFragment extends FragmentBase{
             getHttpManager().callStart(
                     Http.RequestType.GET,
                     Requests.Values.GET_USER,
-                    String.valueOf(ApplicationPropertyCross.getInstance().preferences().getUserId()),
+                    null,
                     null,
                     ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                    ApplicationPropertyCross.getInstance().preferences().getUserId(),
                     null
             );
         }else{
@@ -156,7 +166,7 @@ public class ProfileFragment extends FragmentBase{
         receiveNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                isNotification = isChecked;
             }
         });
 
@@ -171,7 +181,15 @@ public class ProfileFragment extends FragmentBase{
         removeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                getHttpManager().callStart(
+                        Http.RequestType.DELETE,
+                        Requests.Values.DELETE_USER,
+                        null,
+                        null,
+                        ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                        ApplicationPropertyCross.getInstance().preferences().getUserId(),
+                        null
+                );
             }
         });
     }
@@ -210,7 +228,25 @@ public class ProfileFragment extends FragmentBase{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-
+                if (!isEmpty(nameProfileEditText) && !isEmpty(surnameEditText) && !isEmpty(emailEditText) &&
+                        !isEmpty(passwordEditText)){
+                    getHttpManager().callStart(
+                            Http.RequestType.POST,
+                            Requests.Values.POST_UPDATE_USER,
+                            null,
+                            new RequestUpdateUser(username, password, email, name, surname, url_image, isNotification),
+                            ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                            ApplicationPropertyCross.getInstance().preferences().getUserId(),
+                            null
+                    );
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(R.string.error);
+                    builder.setMessage(R.string.empty_fields);
+                    builder.setPositiveButton(R.string.ok, null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -228,6 +264,10 @@ public class ProfileFragment extends FragmentBase{
         super.onHttpBroadcastError(requestId, response);
         if (requestId.equals(Requests.Values.GET_USER.id)) {
 
+        } else if (requestId.equals(Requests.Values.POST_UPDATE_USER.id)) {
+
+        } else if (requestId.equals(Requests.Values.DELETE_USER.id)) {
+
         }
     }
 
@@ -235,7 +275,37 @@ public class ProfileFragment extends FragmentBase{
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
         if (requestId.equals(Requests.Values.GET_USER.id)) {
+            User user = ((ResponseUser) response).getUser();
+            username = user.getUsername();
+            name = user.getName();
+            surname = user.getSurname();
+            email = user.getEmail();
+            password = user.getPassword();
+            url_image = user.getUrl_image();
+            isNotification = user.isNotification();
+            usernameTextView.setText(user.getUsername());
+            Glide.with(getContext())
+                    .load(url_image)
+                    .transform(new CircleTransform(getContext()))
+                    .crossFade()
+                    .placeholder(R.drawable.default_user)
+                    .into(profileImageView);
+            nameProfileEditText.setText(name);
+            surnameEditText.setText(surname);
+            emailEditText.setText(email);
+            passwordEditText.setText(password);
+            receiveNotificationsSwitch.setChecked(isNotification);
+        } else if (requestId.equals(Requests.Values.POST_UPDATE_USER.id)) {
 
+        } else if (requestId.equals(Requests.Values.DELETE_USER.id)) {
+            ApplicationPropertyCross.getInstance().preferences().removeLogin();
+            ApplicationPropertyCross.getInstance().preferences().removeUser();
+            noSessionProfileLayout.setVisibility(View.VISIBLE);
+            profileLayout.setVisibility(View.GONE);
         }
+    }
+
+    private boolean isEmpty(EditText editText) {
+        return editText.getText().toString().trim().length() == 0;
     }
 }

@@ -132,7 +132,7 @@ public class HttpBroadcastManager {
 
     public void callStart(
             Http.RequestType type, Requests.Values request, String url,
-            @Nullable Request requestObj, @Nullable String token, @Nullable Integer numAttempts
+            @Nullable Request requestObj, @Nullable String token, @Nullable String userId, @Nullable Integer numAttempts
     ) {
         if (isCallRegistered(request)) {
             Log.d(TAG, "Starting call to " + request.id);
@@ -142,9 +142,10 @@ public class HttpBroadcastManager {
 
             // Api Key
             Map<String, String> headers;
-            if (token != null) {
+            if (token != null && userId != null) {
                 headers = new HashMap<>();
                 headers.put("X-Auth-Token", token);
+                headers.put("X-User-Id", userId);
             } else {
                 headers = null;
             }

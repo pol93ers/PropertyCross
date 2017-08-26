@@ -31,6 +31,10 @@ import java.io.IOException;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 import mdpa.lasalle.propertycross.util.CircleTransform;
 import mdpa.lasalle.propertycross.util.ImageChooser;
 
@@ -56,7 +60,7 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
 
     private OnSignUpListener signUpListener;
     public interface OnSignUpListener {
-        void onSignUp();
+        void onSignUp(String username, String userID, String authToken);
     }
 
     @Override
@@ -257,6 +261,24 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
 
         private boolean isEmpty(EditText editText) {
             return editText.getText().toString().trim().length() == 0;
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastError(String requestId, ResponseError response) {
+        super.onHttpBroadcastError(requestId, response);
+        if (requestId.equals(Requests.Values.POST_SIGN_UP.id)) {
+
+        }
+    }
+
+    @Override
+    public void onHttpBroadcastSuccess(String requestId, Response response) {
+        super.onHttpBroadcastSuccess(requestId, response);
+        if (requestId.equals(Requests.Values.POST_SIGN_UP.id)) {
+            String userID = ((ResponseLogin)response).getUserId();
+            String authToken = ((ResponseLogin)response).getAuthToken();
+            signUpListener.onSignUp(username, userID, authToken);
         }
     }
 }

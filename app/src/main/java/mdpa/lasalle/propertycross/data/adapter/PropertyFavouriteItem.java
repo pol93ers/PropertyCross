@@ -3,22 +3,25 @@ package mdpa.lasalle.propertycross.data.adapter;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
 
 public class PropertyFavouriteItem implements AdapterRecyclerFavourites.PropertyItem<PropertyFavouriteItem.Property> {
 
     public static class Property implements AdapterRecyclerFavourites.PropertyItem.Property {
         private String id, address, price, meters, type;
-        private double distance;
-        private Uri uri;
+        private double latitude, longitude;
+        private ArrayList<String> images;
 
-        public Property(@NonNull String id, @NonNull String address, Uri uri, @NonNull String price, @NonNull String meters, double distance, @NonNull String type) {
+        public Property(@NonNull String id, @NonNull String address, ArrayList<String> images, @NonNull String price, @NonNull String meters, double latitude, double longitude, @NonNull String type) {
             this.id = id;
             this.address = address;
-            this.uri = uri;
+            this.images = images;
             this.price = price;
             this.meters = meters;
-            this.distance = distance;
+            this.latitude = latitude;
+            this.longitude = longitude;
             this.type = type;
         }
 
@@ -48,13 +51,18 @@ public class PropertyFavouriteItem implements AdapterRecyclerFavourites.Property
         }
 
         @NonNull @Override
-        public Uri getPhoto() {
-            return uri;
+        public ArrayList<String> getPhotos() {
+            return images;
         }
 
         @Override
-        public double getDistance() {
-            return distance;
+        public double getLatitude() {
+            return latitude;
+        }
+
+        @Override
+        public double getLongitude() {
+            return longitude;
         }
     }
 

@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
-import mdpa.lasalle.propertycross.http.project.request.Request;
 import mdpa.lasalle.propertycross.http.project.request.RequestLogin;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
@@ -81,6 +79,7 @@ public class LoginFragment extends FragmentBase {
                             null,
                             new RequestLogin(username, password),
                             null,
+                            null,
                             null
                     );
                 }else{
@@ -122,8 +121,8 @@ public class LoginFragment extends FragmentBase {
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
         if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
-            String userID = ((ResponseLogin)response).getLogin().getUserId();
-            String authToken = ((ResponseLogin)response).getLogin().getAuthToken();
+            String userID = ((ResponseLogin)response).getUserId();
+            String authToken = ((ResponseLogin)response).getAuthToken();
             loginListener.onLogin(username, userID, authToken);
         }
     }

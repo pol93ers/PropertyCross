@@ -68,7 +68,11 @@ public class LoginActivity extends ActivityBase implements SessionFragment.OnLog
     }
 
     @Override
-    public void onSignUp() {
+    public void onSignUp(String username, String userID, String authToken) {
+        ApplicationPropertyCross.getInstance().preferences().setUserEmail(username);
+        ApplicationPropertyCross.getInstance().preferences().setUserId(userID);
+        ApplicationPropertyCross.getInstance().preferences().setLoginApiKey(authToken);
 
+        startActivityAndFinish(MainActivity.newStartIntent(this));
     }
 }

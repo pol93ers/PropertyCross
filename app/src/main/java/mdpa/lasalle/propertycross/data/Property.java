@@ -1,33 +1,32 @@
 package mdpa.lasalle.propertycross.data;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * Created by Pol on 08/05/2017.
- */
+public class Property implements Serializable{
 
-public class Property {
+    @SerializedName("_id") private String id;
+    @SerializedName("name")private String name;
+    @SerializedName("description") private String description;
+    @SerializedName("zipcode") private String zipcode;
+    @SerializedName("address") private String address;
+    @SerializedName("city") private String city;
+    @SerializedName("price") private int price;
+    @SerializedName("type") private String propertyType;
+    @SerializedName("views") private int views;
+    @SerializedName("location") private Location location;
+    @SerializedName("m2") private int area;
+    @SerializedName("owner") private Owner user;
+    @SerializedName("images") private ArrayList<String> images;
 
-    private String id;
-    private String name;
-    private String description;
-    private String zipcode;
-    private String city;
-    private int price;
-    private String propertyType;
-    private int views;
-    private Location location;
-    private int area;
-    private User user;
-    private ArrayList<String> images;
-    private double distance;
-    private ArrayList<Comment> comments;
-
-    public Property(String id, String name, String description, String zipcode, String city, int price, String propertyType, int views, Location location, int area, User user, ArrayList<String> images, double distance, ArrayList<Comment> comments) {
+    public Property(String id, String name, String description, String zipcode, String address, String city, int price, String propertyType, int views, Location location, int area, Owner user, ArrayList<String> images) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.zipcode = zipcode;
+        this.address = address;
         this.city = city;
         this.price = price;
         this.propertyType = propertyType;
@@ -36,8 +35,6 @@ public class Property {
         this.area = area;
         this.user = user;
         this.images = images;
-        this.distance = distance;
-        this.comments = comments;
     }
 
     public String getId() {
@@ -62,6 +59,14 @@ public class Property {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getZipcode() {
@@ -120,11 +125,11 @@ public class Property {
         this.area = area;
     }
 
-    public User getUser() {
+    public Owner getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Owner user) {
         this.user = user;
     }
 
@@ -136,19 +141,21 @@ public class Property {
         this.images = images;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
-    }
-
-    public ArrayList<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
+    @Override
+    public String toString() {
+        return "Property{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", zipcode='" + zipcode + '\'' +
+                ", city='" + city + '\'' +
+                ", price=" + price +
+                ", propertyType='" + propertyType + '\'' +
+                ", views=" + views +
+                ", location=" + location +
+                ", area=" + area +
+                ", user=" + user +
+                ", images=" + images +
+                '}';
     }
 }

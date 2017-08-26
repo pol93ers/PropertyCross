@@ -42,7 +42,7 @@ public class CommentFragment extends FragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_COMMENTS);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_COMMENT);
         idProperty = getArguments().getString("idProperty");
     }
 
@@ -73,10 +73,12 @@ public class CommentFragment extends FragmentBase {
                     String comment = commentEditText.getText().toString();
                     getHttpManager().callStart(
                             Http.RequestType.POST,
-                            Requests.Values.POST_COMMENTS,
-                            null,
-                            new RequestAddComment(comment, idProperty),
+                            Requests.Values.POST_COMMENT,
+                            idProperty + "/comments",
+                            new RequestAddComment(comment,
+                                    ApplicationPropertyCross.getInstance().preferences().getUserId(), null),
                             ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                            ApplicationPropertyCross.getInstance().preferences().getUserId(),
                             null
                     );
                 }else{
@@ -98,7 +100,7 @@ public class CommentFragment extends FragmentBase {
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.POST_COMMENTS.id)) {
+        if (requestId.equals(Requests.Values.POST_COMMENT.id)) {
 
         }
     }
@@ -106,7 +108,7 @@ public class CommentFragment extends FragmentBase {
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.POST_COMMENTS.id)) {
+        if (requestId.equals(Requests.Values.POST_COMMENT.id)) {
             getActivity().onBackPressed();
         }
     }

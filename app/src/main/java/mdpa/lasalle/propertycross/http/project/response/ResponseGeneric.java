@@ -4,17 +4,22 @@ import com.google.gson.annotations.SerializedName;
 
 public class ResponseGeneric extends Response{
 
-    @SerializedName("data") private Data data;
+    @SerializedName("status") private String status;
+    @SerializedName("message") private String message;
 
-    public class Data {
-        @SerializedName("message") private String message;
-
-        public String getMessage() {
-            return message;
-        }
+    public String getStatus() {
+        return status;
     }
 
-    public Data getData() {
-        return data;
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public String toString() {
+        return "ResponseGeneric{" +
+                "status='" + status + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.ui.fragments.main.FavouritesFragment;
@@ -35,12 +37,13 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
         @NonNull P getProperty();
 
         interface Property{
-            @NonNull Uri getPhoto();
+            @NonNull ArrayList<String> getPhotos();
             @NonNull String getId();
             @NonNull String getAddress();
             @NonNull String getMeters();
             @NonNull String getPrice();
-            double getDistance();
+            double getLatitude();
+            double getLongitude();
             @NonNull String getType();
         }
     }
@@ -54,7 +57,7 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
     @Override
     public void onBindViewHolder(final BindableViewHolder<I> holder, int position) {
         super.onBindViewHolder(holder, position);
-        Glide.with(context).load(holder.item.getProperty().getPhoto()).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
+        Glide.with(context).load(Uri.parse(holder.item.getProperty().getPhotos().get(0))).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
         ((TextView)holder.itemView.findViewById(R.id.propertyAddressText)).setText(holder.item.getProperty().getAddress());
         ((TextView)holder.itemView.findViewById(R.id.propertyMetersText)).setText(holder.item.getProperty().getMeters());
         ((TextView)holder.itemView.findViewById(R.id.propertyPriceText)).setText(holder.item.getProperty().getPrice());

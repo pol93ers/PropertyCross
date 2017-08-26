@@ -53,7 +53,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getHttpManager().receiverRegister(this, Requests.Values.PUT_UPDATE_FAVOURITE);
+        getHttpManager().receiverRegister(this, Requests.Values.POST_ADD_FAVOURITE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,13 +129,13 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     @Override
     public void onFavouriteUpdate(String idProperty, boolean isMain) {
         this.isMain = isMain;
-        String url = ApplicationPropertyCross.getInstance().preferences().getUserId() + "/modifyFavorites?propertyId=" + idProperty;
         getHttpManager().callStart(
                 Http.RequestType.PUT,
-                Requests.Values.PUT_UPDATE_FAVOURITE,
-                url,
+                Requests.Values.POST_ADD_FAVOURITE,
+                idProperty,
                 null,
                 ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                ApplicationPropertyCross.getInstance().preferences().getUserId(),
                 null
         );
     }
@@ -148,7 +148,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.PUT_UPDATE_FAVOURITE.id)) {
+        if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
 
         }
     }
@@ -156,7 +156,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.PUT_UPDATE_FAVOURITE.id)) {
+        if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
 
         }
     }

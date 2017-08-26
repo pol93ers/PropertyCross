@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -27,12 +30,13 @@ import mdpa.lasalle.propertycross.data.adapter.CommentItem;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
 import mdpa.lasalle.propertycross.http.project.response.Response;
+import mdpa.lasalle.propertycross.http.project.response.ResponseComments;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
-import mdpa.lasalle.propertycross.http.project.response.ResponseFavouritesByUser;
+import mdpa.lasalle.propertycross.http.project.response.ResponseGeneric;
 import mdpa.lasalle.propertycross.http.project.response.ResponseProperty;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerComments;
 
-public class PropertyFragment extends FragmentBase{
+public class PropertyFragment extends FragmentBase implements ViewPager.OnPageChangeListener{
 
     private ViewPager photosPager;
     private TextView numVisitsTextView, addressTextView, metersTextView, priceTextView, typeTextView,
@@ -42,9 +46,9 @@ public class PropertyFragment extends FragmentBase{
     private RecyclerView commentsRecycler;
     private AdapterRecyclerComments adapterRecyclerComments;
 
+    private ArrayList<String> images;
     private String idProperty, phone, mail;
     private boolean isFavourite;
-    private ArrayList<String> favouriteIds = new ArrayList<>();
     private double latitude, longitude;
 
     private OnMapPropertyFragmentListener mapPropertyFragmentListener;
@@ -81,9 +85,10 @@ public class PropertyFragment extends FragmentBase{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_PROPERTY_WITH_COMMENTS);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.PUT_UPDATE_FAVOURITE);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_ID_FAVOURITES);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_PROPERTY);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_COMMENTS_PROPERTY);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_UPDATE_USER);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_IS_FAVOURITE);
         idProperty = getArguments().getString("idProperty");
     }
 
@@ -100,6 +105,9 @@ public class PropertyFragment extends FragmentBase{
         setHasOptionsMenu(true);
 
         photosPager = (ViewPager) root.findViewById(R.id.photosPropertyPager);
+        PagerImagesAdapter adapter = new PagerImagesAdapter(getContext());
+        photosPager.setAdapter(adapter);
+        photosPager.addOnPageChangeListener(this);
         numVisitsTextView = (TextView) root.findViewById(R.id.numVisitsText);
         addressTextView = (TextView) root.findViewById(R.id.addressText);
         metersTextView = (TextView) root.findViewById(R.id.metersText);
@@ -130,17 +138,19 @@ public class PropertyFragment extends FragmentBase{
         if (ApplicationPropertyCross.getInstance().preferences().getLoginApiKey() != null){
             getHttpManager().callStart(
                     Http.RequestType.GET,
-                    Requests.Values.GET_ID_FAVOURITES,
-                    ApplicationPropertyCross.getInstance().preferences().getUserId(),
+                    Requests.Values.GET_IS_FAVOURITE,
+                    idProperty,
                     null,
                     ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                    ApplicationPropertyCross.getInstance().preferences().getUserId(),
                     null
             );
         }else {
             getHttpManager().callStart(
                     Http.RequestType.GET,
-                    Requests.Values.GET_PROPERTY_WITH_COMMENTS,
+                    Requests.Values.GET_PROPERTY,
                     idProperty,
+                    null,
                     null,
                     null,
                     null
@@ -170,13 +180,13 @@ public class PropertyFragment extends FragmentBase{
         favouriteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = ApplicationPropertyCross.getInstance().preferences().getUserId() + "/modifyFavorites?propertyId=" + idProperty;
                 getHttpManager().callStart(
-                        Http.RequestType.PUT,
-                        Requests.Values.PUT_UPDATE_FAVOURITE,
-                        url,
+                        Http.RequestType.POST,
+                        Requests.Values.POST_ADD_FAVOURITE,
+                        idProperty,
                         null,
                         ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                        ApplicationPropertyCross.getInstance().preferences().getUserId(),
                         null
                 );
             }
@@ -211,14 +221,77 @@ public class PropertyFragment extends FragmentBase{
         });
     }
 
+    private class PagerImagesAdapter extends PagerAdapter {
+
+        private Context context;
+
+        private PagerImagesAdapter(Context context){
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.property_image_view, container, false);
+            ImageView propertyImage = (ImageView) layout.findViewById(R.id.propertyItemImage);
+            Glide.with(getContext()).load(images.get(position)).into(propertyImage);
+            container.addView(layout);
+            return layout;
+        }
+
+        @Override
+        public void	destroyItem(ViewGroup container, int position, Object view){
+            container.removeView((View) view);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+    @Override
+    public void onPageSelected(int position) {
+        /*switch (position){
+            case 0:
+                indicatorTutorial1.setImageResource(R.drawable.circle_focus);
+                indicatorTutorial2.setImageResource(R.drawable.circle_unfocus_white);
+                indicatorTutorial3.setImageResource(R.drawable.circle_unfocus_white);
+                break;
+            case 1:
+                indicatorTutorial1.setImageResource(R.drawable.circle_unfocus_white);
+                indicatorTutorial2.setImageResource(R.drawable.circle_focus);
+                indicatorTutorial3.setImageResource(R.drawable.circle_unfocus_white);
+                break;
+            case 2:
+                indicatorTutorial1.setImageResource(R.drawable.circle_unfocus_white);
+                indicatorTutorial2.setImageResource(R.drawable.circle_unfocus_white);
+                indicatorTutorial3.setImageResource(R.drawable.circle_focus);
+                break;
+        }*/
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {}
+
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.GET_PROPERTY_WITH_COMMENTS.id)) {
+        if (requestId.equals(Requests.Values.GET_PROPERTY.id)) {
 
-        } else if (requestId.equals(Requests.Values.PUT_UPDATE_FAVOURITE.id)) {
+        } else if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
 
-        } else if(requestId.equals(Requests.Values.GET_ID_FAVOURITES.id)){
+        } else if(requestId.equals(Requests.Values.GET_IS_FAVOURITE.id)){
+
+        } else if(requestId.equals(Requests.Values.GET_COMMENTS_PROPERTY.id)){
 
         }
     }
@@ -226,7 +299,7 @@ public class PropertyFragment extends FragmentBase{
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.GET_PROPERTY_WITH_COMMENTS.id)) {
+        if (requestId.equals(Requests.Values.GET_PROPERTY.id)) {
             Property property = ((ResponseProperty) response).getProperty();
             if (isFavourite){
                 favouriteImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
@@ -241,43 +314,56 @@ public class PropertyFragment extends FragmentBase{
             typeTextView.setText(property.getPropertyType());
             phone = property.getUser().getPhone();
             mail = property.getUser().getMail();
-            if(property.getComments().size() > 0){
-                noCommentsTextView.setVisibility(View.GONE);
-                commentsRecycler.setVisibility(View.VISIBLE);
-                ArrayList<Comment> comments = property.getComments();
-                ArrayList<CommentItem> commentItems = new ArrayList<>();
-                for (int i=0; i<comments.size(); i++){
-                    commentItems.add(new CommentItem(new CommentItem.Comment(comments.get(i).getUser(),
-                            comments.get(i).getComment(),comments.get(i).getCreatedAt())));
-                }
-                adapterRecyclerComments.setItems(commentItems);
-            }else{
-                noCommentsTextView.setVisibility(View.VISIBLE);
-                commentsRecycler.setVisibility(View.GONE);
-            }
-        } else if (requestId.equals(Requests.Values.PUT_UPDATE_FAVOURITE.id)) {
+            images = property.getImages();
+            latitude = property.getLocation().getLatitude();
+            longitude = property.getLocation().getLongitude();
+
+            getHttpManager().callStart(
+                    Http.RequestType.GET,
+                    Requests.Values.GET_COMMENTS_PROPERTY,
+                    idProperty + "/comments",
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        } else if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
             isFavourite = !isFavourite;
             if (isFavourite){
                 favouriteImageView.setImageResource(R.drawable.ic_favorite_black_24dp);
             }else{
                 favouriteImageView.setImageResource(R.drawable.ic_favorite_border_black_24dp);
             }
-        } else if(requestId.equals(Requests.Values.GET_ID_FAVOURITES.id)){
-            favouriteIds = ((ResponseFavouritesByUser)response).getFavouritesByUser().getFavourites();
-            for (int i=0;i<favouriteIds.size();i++){
-                if(idProperty.equals(favouriteIds.get(i))){
-                    isFavourite = true;
-                    break;
-                }
+        } else if(requestId.equals(Requests.Values.GET_IS_FAVOURITE.id)){
+            String favourite = ((ResponseGeneric)response).getMessage();
+            if(favourite.equals(getString(R.string.favourite))){
+                isFavourite = true;
             }
+
             getHttpManager().callStart(
                     Http.RequestType.GET,
-                    Requests.Values.GET_PROPERTY_WITH_COMMENTS,
+                    Requests.Values.GET_PROPERTY,
                     idProperty,
                     null,
-                    ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                    null,
+                    null,
                     null
             );
+        } else if(requestId.equals(Requests.Values.GET_COMMENTS_PROPERTY.id)){
+            ArrayList<Comment> comments = ((ResponseComments) response).getComments();
+            if(comments.size() > 0){
+                noCommentsTextView.setVisibility(View.GONE);
+                commentsRecycler.setVisibility(View.VISIBLE);
+                ArrayList<CommentItem> commentItems = new ArrayList<>();
+                for (int i=0; i<comments.size(); i++){
+                    commentItems.add(new CommentItem(new CommentItem.Comment(comments.get(i).getUser().getUsername(),
+                            comments.get(i).getContent(),comments.get(i).getCreatedAt())));
+                }
+                adapterRecyclerComments.setItems(commentItems);
+            }else{
+                noCommentsTextView.setVisibility(View.VISIBLE);
+                commentsRecycler.setVisibility(View.GONE);
+            }
         }
     }
 
