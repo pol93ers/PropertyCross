@@ -24,7 +24,7 @@ public class AnimationHelper {
         }
     }
 
-    public static @NonNull ObjectAnimator createOfAlpha(
+    private static @NonNull ObjectAnimator createOfAlpha(
             @NonNull View view, float start, float end
     ) {
         ObjectAnimator alphaAnimator = ObjectAnimator.ofFloat(view, View.ALPHA, start, end);

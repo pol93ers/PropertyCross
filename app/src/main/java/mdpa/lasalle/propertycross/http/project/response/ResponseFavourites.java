@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-import mdpa.lasalle.propertycross.data.Favourite;
+import mdpa.lasalle.propertycross.data.Property;
 
 public class ResponseFavourites extends Response {
 
-    @SerializedName("favourites") private ArrayList<Favourite> favourites;
+    @SerializedName("favourites") private ArrayList<Property> favourites;
 
-    public ArrayList<Favourite> getFavourites() {
+    public ArrayList<Property> getFavourites() {
         return favourites;
     }
 

@@ -6,10 +6,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +42,7 @@ import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
-import mdpa.lasalle.propertycross.data.Favourite;
+import mdpa.lasalle.propertycross.data.Property;
 import mdpa.lasalle.propertycross.data.adapter.PropertyFavouriteItem;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
@@ -57,12 +57,12 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     private RelativeLayout noSessionFavouritesLayout, favouritesLayout;
     private Button sessionFavouritesButton;
     private TextView numFavouritesTextView, emptyMapText, numberPropertiesMapText;
-    private RecyclerView favouritesRecyclerView;
-    private GoogleMap googleMap;
+    private TabLayout favouritesTabLayout;
 
     private AdapterRecyclerFavourites adapter;
-    private ArrayList<Favourite> properties;
     private ArrayList<PropertyFavouriteItem> propertyItems = new ArrayList<>();
+    private ArrayList<PropertyFavouriteItem> propertySaleItems = new ArrayList<>();
+    private ArrayList<PropertyFavouriteItem> propertyRentalItems = new ArrayList<>();
     private String idProperty;
 
     private GoogleApiClient mGoogleApiClient;
@@ -122,16 +122,18 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
         buildGoogleApiClient();
 
+        favouritesTabLayout = (TabLayout) root.findViewById(R.id.tabFavouritesLayout);
         noSessionFavouritesLayout = (RelativeLayout) root.findViewById(R.id.noSessionFavouritesLayout);
         favouritesLayout = (RelativeLayout) root.findViewById(R.id.favouritesLayout);
         sessionFavouritesButton = (Button) root.findViewById(R.id.sessionFavouritesButton);
         numFavouritesTextView = (TextView) root.findViewById(R.id.numberPropertiesFavourites);
-        favouritesRecyclerView = (RecyclerView) root.findViewById(R.id.recyclerFavourites);
+        RecyclerView favouritesRecyclerView = (RecyclerView) root.findViewById(R.id.recyclerFavourites);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if (favouritesRecyclerView != null) {
             favouritesRecyclerView.setLayoutManager(linearLayoutManager);
             adapter = new AdapterRecyclerFavourites(getContext(), favouriteUpdateListener);
+            adapter.addOnItemClickListener(this);
             favouritesRecyclerView.setAdapter(adapter);
         }else{
             MapView mapView = (MapView) root.findViewById(R.id.mapView);
@@ -179,7 +181,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult arg0) {
+    public void onConnectionFailed(@NonNull ConnectionResult arg0) {
         Toast.makeText(getContext(), "Failed to connect...", Toast.LENGTH_SHORT).show();
 
     }
@@ -244,7 +246,6 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        this.googleMap = googleMap;
         try {
             // Zoom googleMap camera un initial position.
             googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -289,6 +290,44 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
             @Override
             public void onClick(View v) {
                 loginActivityListener.onLoginActivity();
+            }
+        });
+
+        favouritesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0){
+                    if (!propertySaleItems.isEmpty()){
+                        propertyItems = propertySaleItems;
+                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numFavouritesTextView.setText(numberProperties);
+                        adapter.setItems(propertyItems);
+                    }else{
+                        numFavouritesTextView.setText(R.string.results_not_found);
+                        adapter.clearItems();
+                    }
+                }else{
+                    if (!propertyRentalItems.isEmpty()){
+                        propertyItems = propertyRentalItems;
+                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numFavouritesTextView.setText(numberProperties);
+                        adapter.setItems(propertyItems);
+                    }else{
+                        numFavouritesTextView.setText(R.string.results_not_found);
+                        adapter.clearItems();
+                    }
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
     }
@@ -348,7 +387,12 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                                     adapter.clearItems();
                                     adapter.setItems(propertyItems);
                                 }else{
-
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                    builder.setTitle(R.string.enable_gps);
+                                    builder.setMessage(R.string.enable_gps_message);
+                                    builder.setPositiveButton(R.string.ok, null);
+                                    AlertDialog dialogLocation = builder.create();
+                                    dialogLocation.show();
                                 }
                                 break;
                             case 3:
@@ -423,16 +467,54 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
         if (requestId.equals(Requests.Values.POST_INC_VIEWS.id)) {
             propertyFragmentListener.onPropertyFragment(idProperty);
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)) {
-            properties = ((ResponseFavourites) response).getFavourites();
+            propertySaleItems = new ArrayList<>();
+            propertyRentalItems = new ArrayList<>();
+            ArrayList<Property> properties = ((ResponseFavourites) response).getFavourites();
             if (properties.size() > 0) {
                 String numberProperties = properties.size() + getString(R.string.properties);
                 numFavouritesTextView.setText(numberProperties);
                 for (int i = 0; i < properties.size(); i++) {
-                    propertyItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).get_id(),
-                            properties.get(i).getAddress(), properties.get(i).getImages(),
-                            String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()), properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(), properties.get(i).getPropertyType())));
+                    if (properties.get(i).getPropertyType().equals(getString(R.string.sale))){
+                        propertySaleItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
+                                properties.get(i).getAddress(), properties.get(i).getImages(),
+                                String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
+                                properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
+                                properties.get(i).getPropertyType())));
+                    }else{
+                        propertyRentalItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
+                                properties.get(i).getAddress(), properties.get(i).getImages(),
+                                String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
+                                properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
+                                properties.get(i).getPropertyType())));
+                    }
+
                 }
-                adapter.setItems(propertyItems);
+            }
+
+            if (favouritesTabLayout.getSelectedTabPosition() == 0){
+                if (!propertySaleItems.isEmpty()){
+                    propertyItems = propertySaleItems;
+                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                    numFavouritesTextView.setText(numProperties);
+                    adapter.setItems(propertyItems);
+                }
+            }else{
+                if (!propertyRentalItems.isEmpty()){
+                    propertyItems = propertyRentalItems;
+                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                    numFavouritesTextView.setText(numProperties);
+                    adapter.setItems(propertyItems);
+                }
+            }
+
+            if (numberPropertiesMapText != null) {
+                if (properties.size() != 0){
+                    numberPropertiesMapText.setText(String.valueOf(properties.size()));
+                    emptyMapText.setVisibility(View.GONE);
+                }else{
+                    numberPropertiesMapText.setVisibility(View.GONE);
+                    emptyMapText.setVisibility(View.VISIBLE);
+                }
             }
         }
     }

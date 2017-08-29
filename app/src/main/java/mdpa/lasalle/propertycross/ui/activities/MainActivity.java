@@ -2,12 +2,10 @@ package mdpa.lasalle.propertycross.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -24,7 +22,6 @@ import mdpa.lasalle.propertycross.ui.fragments.main.MainFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.MapFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.ProfileFragment;
 import mdpa.lasalle.propertycross.ui.fragments.main.PropertyFragment;
-import mdpa.lasalle.propertycross.ui.fragments.search.SearchFragment;
 import mdpa.lasalle.propertycross.util.Component;
 import mdpa.lasalle.propertycross.util.FragmentHelper;
 import mdpa.lasalle.propertycross.util.FragmentManagerUtils;
@@ -130,7 +127,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     public void onFavouriteUpdate(String idProperty, boolean isMain) {
         this.isMain = isMain;
         getHttpManager().callStart(
-                Http.RequestType.PUT,
+                Http.RequestType.POST,
                 Requests.Values.POST_ADD_FAVOURITE,
                 idProperty,
                 null,

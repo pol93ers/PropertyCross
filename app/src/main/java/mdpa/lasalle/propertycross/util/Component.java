@@ -10,7 +10,7 @@ public interface Component {
         MainActivity("MainActivity"),
         LoginActivity("LoginActivity"),
         SearchActivity("SearchActivity"),
-        LastSearchsActivity("LastSearchActivity"),
+        LastSearchesActivity("LastSearchesActivity"),
 
         MainFragment("MainFragment"),
         FavouritesFragment("FavouritesFragment"),

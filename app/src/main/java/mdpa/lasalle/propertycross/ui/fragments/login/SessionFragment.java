@@ -1,7 +1,6 @@
 package mdpa.lasalle.propertycross.ui.fragments.login;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,7 +35,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.http.Http;
@@ -45,7 +43,6 @@ import mdpa.lasalle.propertycross.http.project.request.RequestLogin;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
-import mdpa.lasalle.propertycross.ui.activities.LoginActivity;
 import mdpa.lasalle.propertycross.util.FacebookUserData;
 
 
@@ -54,9 +51,6 @@ public class SessionFragment extends FragmentBase implements
 
     private TextView loginSessionText, signupSessionText;
     private CallbackManager fbCallbackManager;
-    private LoginButton fbLoginButton;
-
-    private String username, password;
 
     @NonNull
     @Override
@@ -80,7 +74,7 @@ public class SessionFragment extends FragmentBase implements
 
     private OnLoginListener loginListener;
     public interface OnLoginListener{
-        void onLogin(String username, String userID, String authToken);
+        void onLogin(String userID, String authToken);
     }
 
     @Override
@@ -110,7 +104,7 @@ public class SessionFragment extends FragmentBase implements
 
         View root = inflater.inflate(R.layout.fragment_session, container, false);
 
-        fbLoginButton = (LoginButton) root.findViewById(R.id.facebookLoginButton);
+        LoginButton fbLoginButton = (LoginButton) root.findViewById(R.id.facebookLoginButton);
         loginSessionText = (TextView) root.findViewById(R.id.loginSessionText);
         signupSessionText = (TextView) root.findViewById(R.id.signupSessionText);
 
@@ -198,14 +192,14 @@ public class SessionFragment extends FragmentBase implements
             FacebookUserData fbData = new Gson().fromJson(
                     response.getRawResponse(), FacebookUserData.class);
 
-            username = fbData.getEmail();
-            password = FacebookUserData.generatePassword(Profile.getCurrentProfile());
+            String email = fbData.getEmail();
+            String password = FacebookUserData.generatePassword(Profile.getCurrentProfile());
 
             getHttpManager().callStart(
                     Http.RequestType.POST,
                     Requests.Values.POST_LOGIN,
                     null,
-                    new RequestLogin(username, password),
+                    new RequestLogin(email, password),
                     null,
                     null,
                     null
@@ -271,7 +265,7 @@ public class SessionFragment extends FragmentBase implements
         if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
             String userID = ((ResponseLogin)response).getUserId();
             String authToken = ((ResponseLogin)response).getAuthToken();
-            loginListener.onLogin(username, userID, authToken);
+            loginListener.onLogin(userID, authToken);
         }
     }
 

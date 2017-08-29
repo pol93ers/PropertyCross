@@ -1,6 +1,5 @@
 package mdpa.lasalle.propertycross.data.adapter;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;

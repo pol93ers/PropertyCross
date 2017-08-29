@@ -1,18 +1,15 @@
 package mdpa.lasalle.propertycross.http.project;
 
-
-import mdpa.lasalle.propertycross.BuildConfig;
-
 public class Requests {
     private static Requests ourInstance = new Requests();
     public static Requests getInstance() {
         return ourInstance;
     }
 
-    public static String getBaseServerUrl() {
+    private static String getBaseServerUrl() {
         return "http://ls25860.lasalle.ovh";
     }
-    protected static String getApiServerUrl() {
+    private static String getApiServerUrl() {
         return getBaseServerUrl() + "/api";
     }
 

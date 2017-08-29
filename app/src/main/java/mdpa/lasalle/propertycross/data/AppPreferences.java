@@ -40,18 +40,8 @@ public class AppPreferences extends PreferencesBase{
         return getString(PREFERENCE.USER_ID.val(), null);
     }
 
-
-    public boolean setUserEmail(@Nullable String userName) {
-        return putString(PREFERENCE.USER_EMAIL.val(), userName);
-    }
-
-    public @Nullable String getUserEmail() {
-        return getString(PREFERENCE.USER_EMAIL.val(), null);
-    }
-
     public void removeUser() {
         setUserId(null);
-        setUserEmail(null);
         setLoginApiKey(null);
     }
 
@@ -65,14 +55,6 @@ public class AppPreferences extends PreferencesBase{
 
     public void removeLogin() {
         setLoginApiKey(null);
-    }
-
-    public boolean setDeviceToken(@Nullable String loginKey) {
-        return putString(PREFERENCE.DEVICE_TOKEN.val(), loginKey);
-    }
-
-    public @Nullable String getDeviceToken() {
-        return getString(PREFERENCE.DEVICE_TOKEN.val(), null);
     }
 
     public boolean setLastSearches(@Nullable String lastSearches) {

@@ -37,7 +37,7 @@ public class LoginFragment extends FragmentBase {
 
     private OnLoginListener loginListener;
     public interface OnLoginListener{
-        void onLogin(String username, String userID, String authToken);
+        void onLogin(String userID, String authToken);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class LoginFragment extends FragmentBase {
         if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
             String userID = ((ResponseLogin)response).getUserId();
             String authToken = ((ResponseLogin)response).getAuthToken();
-            loginListener.onLogin(username, userID, authToken);
+            loginListener.onLogin(userID, authToken);
         }
     }
 }

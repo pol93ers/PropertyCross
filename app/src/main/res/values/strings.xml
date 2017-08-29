@@ -21,6 +21,7 @@
     <string name="rent">Alquiler</string>
     <string name="buy">Venta</string>
     <string name="enable_gps">Habilitar GPS</string>
+    <string name="enable_gps_message">Habilite el GPS para poder ordenar según la distancia de su ubicación a las propiedades.</string>
     <string name="results_not_found">No se han encontrado resultados de búsqueda</string>
     <string name="properties">Immuebles</string>
     <string name="property">Property</string>

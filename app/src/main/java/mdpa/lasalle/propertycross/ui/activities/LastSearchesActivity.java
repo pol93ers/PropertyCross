@@ -17,7 +17,7 @@ public class LastSearchesActivity extends ActivityBase implements LastSearchesFr
 
     @NonNull @Override
     public ID getComponent() {
-        return ID.LastSearchsActivity;
+        return ID.LastSearchesActivity;
     }
 
     public static Intent newStartIntent(Context context) {

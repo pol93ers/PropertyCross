@@ -8,11 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,7 +42,6 @@ import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
-import mdpa.lasalle.propertycross.data.Favourite;
 import mdpa.lasalle.propertycross.data.Property;
 import mdpa.lasalle.propertycross.data.adapter.PropertyItem;
 import mdpa.lasalle.propertycross.http.Http;
@@ -61,12 +57,8 @@ import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyItem>, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private FloatingActionButton searchFAB;
-    private RecyclerView recyclerProperties;
     private TextView numberPropertiesText, emptyMapText, numberPropertiesMapText;
     private TabLayout propertiesTabLayout;
-    private TabItem saleTabItem, rentalTabItem;
-
-    private GoogleMap googleMap;
 
     private AdapterRecyclerMain adapter;
 
@@ -77,7 +69,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     private ArrayList<PropertyItem> propertyItems = new ArrayList<>();
     private ArrayList<PropertyItem> propertySaleItems = new ArrayList<>();
     private ArrayList<PropertyItem> propertyRentalItems = new ArrayList<>();
-    private ArrayList<Favourite> favouriteProperties = new ArrayList<>();
+    private ArrayList<Property> favouriteProperties = new ArrayList<>();
     private String idProperty;
     private boolean isSearch;
 
@@ -145,11 +137,9 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
         View root = inflater.inflate(R.layout.fragment_main_properties, container, false);
 
         propertiesTabLayout = (TabLayout) root.findViewById(R.id.tabPropertiesLayout);
-        saleTabItem = (TabItem) root.findViewById(R.id.buyPropertiesTabItem);
-        rentalTabItem = (TabItem) root.findViewById(R.id.rentPropertiesTabItem);
         searchFAB = (FloatingActionButton) root.findViewById(R.id.searchFAB);
         numberPropertiesText = (TextView) root.findViewById(R.id.numberProperties);
-        recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
+        RecyclerView recyclerProperties = (RecyclerView) root.findViewById(R.id.recyclerProperties);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if (recyclerProperties != null) {
@@ -271,7 +261,6 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        this.googleMap = googleMap;
         try {
             // Zoom googleMap camera un initial position.
             googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -300,7 +289,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
             case R.id.menu_main:
                 final CharSequence[] type_order = {getString(R.string.less_more_meters), getString(R.string.more_less_meters),
                         getString(R.string.less_more_distance), getString(R.string.less_more_price), getString(R.string.more_less_price)};
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                 dialogBuilder.setTitle(getString(R.string.title_order));
                 dialogBuilder.setItems(type_order, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
@@ -344,7 +333,12 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                                     adapter.clearItems();
                                     adapter.setItems(propertyItems);
                                 }else{
-
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                    builder.setTitle(R.string.enable_gps);
+                                    builder.setMessage(R.string.enable_gps_message);
+                                    builder.setPositiveButton(R.string.ok, null);
+                                    AlertDialog dialogLocation = builder.create();
+                                    dialogLocation.show();
                                 }
                                 break;
                             case 3:
@@ -388,35 +382,43 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
             });
         }
 
-        /*saleTabItem.setOn.setOnClickListener(new View.OnClickListener() {
+        propertiesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if (!propertySaleItems.isEmpty()){
-                    propertyItems = propertySaleItems;
-                    String numberProperties = propertyItems.size() + getString(R.string.properties);
-                    numberPropertiesText.setText(numberProperties);
-                    adapter.setItems(propertyItems);
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                if (position == 0){
+                    if (!propertySaleItems.isEmpty()){
+                        propertyItems = propertySaleItems;
+                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numberPropertiesText.setText(numberProperties);
+                        adapter.setItems(propertyItems);
+                    }else{
+                        numberPropertiesText.setText(R.string.results_not_found);
+                        adapter.clearItems();
+                    }
                 }else{
-                    numberPropertiesText.setText(R.string.results_not_found);
-                    adapter.clearItems();
+                    if (!propertyRentalItems.isEmpty()){
+                        propertyItems = propertyRentalItems;
+                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numberPropertiesText.setText(numberProperties);
+                        adapter.setItems(propertyItems);
+                    }else{
+                        numberPropertiesText.setText(R.string.results_not_found);
+                        adapter.clearItems();
+                    }
                 }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
             }
         });
-
-        rentalTabItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!propertySaleItems.isEmpty()){
-                    propertyItems = propertySaleItems;
-                    String numberProperties = propertyItems.size() + getString(R.string.properties);
-                    numberPropertiesText.setText(numberProperties);
-                    adapter.setItems(propertyItems);
-                }else{
-                    numberPropertiesText.setText(R.string.results_not_found);
-                    adapter.clearItems();
-                }
-            }
-        });*/
     }
 
     @Override
@@ -434,7 +436,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                         boolean isFavourite = false;
                         if (favouriteProperties != null) {
                             for (int j=0;j<favouriteProperties.size();j++){
-                                if (properties.get(i).getId().equals(favouriteProperties.get(j).get_id())){
+                                if (properties.get(i).getId().equals(favouriteProperties.get(j).getId())){
                                     isFavourite = true;
                                     break;
                                 }
@@ -461,8 +463,8 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                             adapter.setItems(propertyItems);
                         }
                     }else{
-                        if (!propertySaleItems.isEmpty()){
-                            propertyItems = propertySaleItems;
+                        if (!propertyRentalItems.isEmpty()){
+                            propertyItems = propertyRentalItems;
                             String numProperties = propertyItems.size() + " " + getString(R.string.properties);
                             numberPropertiesText.setText(numProperties);
                             adapter.setItems(propertyItems);
@@ -471,7 +473,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
                     if (numberPropertiesMapText != null) {
                         if (numberProperties != 0){
-                            numberPropertiesMapText.setText(numberProperties);
+                            numberPropertiesMapText.setText(String.valueOf(numberProperties));
                             emptyMapText.setVisibility(View.GONE);
                         }else{
                             numberPropertiesMapText.setVisibility(View.GONE);
@@ -539,7 +541,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                 boolean isFavourite = false;
                 if (favouriteProperties != null) {
                     for (int j = 0; j < favouriteProperties.size(); j++) {
-                        if (properties.get(i).getId().equals(favouriteProperties.get(j).get_id())) {
+                        if (properties.get(i).getId().equals(favouriteProperties.get(j).getId())) {
                             isFavourite = true;
                             break;
                         }
@@ -566,8 +568,8 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                     adapter.setItems(propertyItems);
                 }
             }else{
-                if (!propertySaleItems.isEmpty()){
-                    propertyItems = propertySaleItems;
+                if (!propertyRentalItems.isEmpty()){
+                    propertyItems = propertyRentalItems;
                     String numProperties = propertyItems.size() + " " + getString(R.string.properties);
                     numberPropertiesText.setText(numProperties);
                     adapter.setItems(propertyItems);

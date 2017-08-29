@@ -23,12 +23,13 @@ public class RequestUpdateUser extends Request{
 
     @Override
     public String toString() {
-        return "RequestSignUp{" +
+        return "RequestUpdateUser{" +
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", surnames='" + surname + '\'' +
+                ", surname='" + surname + '\'' +
+                ", url_image='" + url_image + '\'' +
                 ", isNotification=" + isNotification +
                 '}';
     }

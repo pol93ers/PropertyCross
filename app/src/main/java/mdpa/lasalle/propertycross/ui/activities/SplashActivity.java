@@ -2,10 +2,8 @@ package mdpa.lasalle.propertycross.ui.activities;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import mdpa.lasalle.propertycross.R;
@@ -18,10 +16,6 @@ public class SplashActivity extends ActivityBase {
     @Override
     public ID getComponent() {
         return ID.SplashActivity;
-    }
-
-    public static Intent newStartIntent(Context context) {
-        return new Intent(context, SplashActivity.class);
     }
 
     @Override

@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,8 +40,6 @@ import mdpa.lasalle.propertycross.ui.adapters.AdapterLastSearches;
 public class LastSearchesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener{
 
     private EditText searchEditText;
-    private TextView myLocationText;
-    private RecyclerView lastSearchesRecycler;
     private ImageView searchImage;
     private LinearLayout myLocationLayout;
 
@@ -81,10 +78,9 @@ public class LastSearchesFragment extends FragmentBase implements AdapterRecycle
         setHasOptionsMenu(true);
 
         searchEditText = (EditText) root.findViewById(R.id.searchEditText);
-        myLocationText = (TextView) root.findViewById(R.id.myLocationText);
         myLocationLayout = (LinearLayout) root.findViewById(R.id.myLocationLayout);
         searchImage = (ImageView) root.findViewById(R.id.searchImageView);
-        lastSearchesRecycler = (RecyclerView) root.findViewById(R.id.lastSearchesRecycler);
+        RecyclerView lastSearchesRecycler = (RecyclerView) root.findViewById(R.id.lastSearchesRecycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         lastSearchesRecycler.setLayoutManager(linearLayoutManager);
@@ -101,11 +97,14 @@ public class LastSearchesFragment extends FragmentBase implements AdapterRecycle
         super.onStart();
         onGetLocation();
         if(ApplicationPropertyCross.getInstance().preferences().getLastSearches() != null) {
-            lastSearches = new ArrayList<String>(Arrays.asList(ApplicationPropertyCross.getInstance().preferences().getLastSearches().split(",")));
+            lastSearches = new ArrayList<>(Arrays.asList(ApplicationPropertyCross.getInstance().preferences().getLastSearches().split(",")));
             int count = 0;
             for(int i=0; i<lastSearches.size(); i++){
                 if (count <= 5){
-                    lastSearchItems.add(new LastSearchItem(new LastSearchItem.LastSearch(lastSearches.get(i))));
+                    String lastSearchText = lastSearches.get(i);
+                    lastSearchText = lastSearchText.replace("[", "").replace("]","");
+                    if (lastSearchText.charAt(0) == ' ') lastSearchText = lastSearchText.substring(1, lastSearchText.length());
+                    lastSearchItems.add(new LastSearchItem(new LastSearchItem.LastSearch(lastSearchText)));
                     count++;
                 }else{
                     break;

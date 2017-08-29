@@ -31,13 +31,14 @@ import java.io.IOException;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
+import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestSignUp;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 import mdpa.lasalle.propertycross.util.CircleTransform;
 import mdpa.lasalle.propertycross.util.ImageChooser;
-
 
 public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChangeListener{
 
@@ -60,7 +61,7 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
 
     private OnSignUpListener signUpListener;
     public interface OnSignUpListener {
-        void onSignUp(String username, String userID, String authToken);
+        void onSignUp(String userID, String authToken);
     }
 
     @Override
@@ -72,6 +73,13 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_SIGN_UP);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getHttpManager().receiverUnregister(getContext());
     }
 
     @Override
@@ -136,11 +144,11 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
         }
     }
 
-    public class AdapterPagerSignUp extends PagerAdapter {
+    private class AdapterPagerSignUp extends PagerAdapter {
 
         private Context context;
 
-        public AdapterPagerSignUp(Context context) {
+        private AdapterPagerSignUp(Context context) {
             this.context = context;
         }
 
@@ -229,6 +237,15 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
                                     String name = nameEditText.getText().toString();
                                     String surname = surnameEditText.getText().toString();
                                     boolean notificationsBool = notificationsSwitch.isChecked();
+                                    getHttpManager().callStart(
+                                            Http.RequestType.POST,
+                                            Requests.Values.POST_SIGN_UP,
+                                            null,
+                                            new RequestSignUp(username, password, email, name, surname, notificationsBool),
+                                            null,
+                                            null,
+                                            null
+                                    );
                                 }else{
                                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                     builder.setTitle(R.string.error);
@@ -278,7 +295,7 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
         if (requestId.equals(Requests.Values.POST_SIGN_UP.id)) {
             String userID = ((ResponseLogin)response).getUserId();
             String authToken = ((ResponseLogin)response).getAuthToken();
-            signUpListener.onSignUp(username, userID, authToken);
+            signUpListener.onSignUp(userID, authToken);
         }
     }
 }

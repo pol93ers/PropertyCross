@@ -2,10 +2,8 @@ package mdpa.lasalle.propertycross.ui.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.NonNull;
 
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
@@ -59,8 +57,7 @@ public class LoginActivity extends ActivityBase implements SessionFragment.OnLog
     }
 
     @Override
-    public void onLogin(String username, String userID, String authToken) {
-        ApplicationPropertyCross.getInstance().preferences().setUserEmail(username);
+    public void onLogin(String userID, String authToken) {
         ApplicationPropertyCross.getInstance().preferences().setUserId(userID);
         ApplicationPropertyCross.getInstance().preferences().setLoginApiKey(authToken);
 
@@ -68,8 +65,7 @@ public class LoginActivity extends ActivityBase implements SessionFragment.OnLog
     }
 
     @Override
-    public void onSignUp(String username, String userID, String authToken) {
-        ApplicationPropertyCross.getInstance().preferences().setUserEmail(username);
+    public void onSignUp(String userID, String authToken) {
         ApplicationPropertyCross.getInstance().preferences().setUserId(userID);
         ApplicationPropertyCross.getInstance().preferences().setLoginApiKey(authToken);
 

@@ -26,7 +26,7 @@ public class AdapterLastSearches <I extends AdapterLastSearches.LastSearchItem> 
 
     @NonNull
     @Override
-    protected BindableViewHolder onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
+    protected BindableViewHolder<I> onCreateViewHolder(Context context, LayoutInflater inflater, ViewGroup parent, int viewType) {
         return new BindableViewHolder<>(inflater.inflate(R.layout.last_search_item_view, parent, false));
     }
 

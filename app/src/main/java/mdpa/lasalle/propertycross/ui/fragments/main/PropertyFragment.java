@@ -38,7 +38,6 @@ import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerComments;
 
 public class PropertyFragment extends FragmentBase implements ViewPager.OnPageChangeListener{
 
-    private ViewPager photosPager;
     private TextView numVisitsTextView, addressTextView, metersTextView, priceTextView, typeTextView,
             descriptionTextView, noCommentsTextView;
     private ImageView shareImageView, favouriteImageView;
@@ -87,7 +86,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
         super.onCreate(savedInstanceState);
         getHttpManager().receiverRegister(getContext(), Requests.Values.GET_PROPERTY);
         getHttpManager().receiverRegister(getContext(), Requests.Values.GET_COMMENTS_PROPERTY);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_UPDATE_USER);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_ADD_FAVOURITE);
         getHttpManager().receiverRegister(getContext(), Requests.Values.GET_IS_FAVOURITE);
         idProperty = getArguments().getString("idProperty");
     }
@@ -104,7 +103,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
         View root = inflater.inflate(R.layout.fragment_property, container, false);
         setHasOptionsMenu(true);
 
-        photosPager = (ViewPager) root.findViewById(R.id.photosPropertyPager);
+        ViewPager photosPager = (ViewPager) root.findViewById(R.id.photosPropertyPager);
         PagerImagesAdapter adapter = new PagerImagesAdapter(getContext());
         photosPager.setAdapter(adapter);
         photosPager.addOnPageChangeListener(this);
@@ -357,7 +356,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
                 ArrayList<CommentItem> commentItems = new ArrayList<>();
                 for (int i=0; i<comments.size(); i++){
                     commentItems.add(new CommentItem(new CommentItem.Comment(comments.get(i).getUser().getUsername(),
-                            comments.get(i).getContent(),comments.get(i).getCreatedAt())));
+                            comments.get(i).getContent(),comments.get(i).getCreatedAt(), comments.get(i).getImages())));
                 }
                 adapterRecyclerComments.setItems(commentItems);
             }else{

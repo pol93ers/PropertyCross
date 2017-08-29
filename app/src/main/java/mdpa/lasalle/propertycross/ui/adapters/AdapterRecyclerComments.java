@@ -6,8 +6,11 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
+import mdpa.lasalle.propertycross.data.Image;
 
 
 public class AdapterRecyclerComments<I extends AdapterRecyclerComments.CommentsItem> extends AdapterRecyclerBase<I, AdapterRecyclerBase.BindableViewHolder<I>>{
@@ -28,7 +31,8 @@ public class AdapterRecyclerComments<I extends AdapterRecyclerComments.CommentsI
         @NonNull P getComment();
 
         interface Comment{
-            //@NonNull Uri getPhoto();
+            @NonNull
+            ArrayList<Image> getPhotos();
             @NonNull String getUsername();
             @NonNull String getTextComment();
             @NonNull String getTimeComment();
