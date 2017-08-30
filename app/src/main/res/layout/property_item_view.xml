@@ -15,14 +15,22 @@
         app:srcCompat="@drawable/default_image" />
 
     <TextView
-        android:id="@+id/propertyAddressText"
+        android:id="@+id/propertyNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_toRightOf="@+id/propertyImage"
-        android:text="C/ Vallseca 8"
+        android:layout_toEndOf="@+id/propertyImage"
         android:textSize="18sp"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/propertyAddressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/propertyNameText"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@+id/propertyImage" />
 
     <TextView
         android:id="@+id/propertyMetersText"
@@ -31,8 +39,7 @@
         android:layout_below="@+id/propertyAddressText"
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
-        android:layout_toRightOf="@+id/propertyImage"
-        android:text="150m2" />
+        android:layout_toEndOf="@+id/propertyImage" />
 
     <TextView
         android:id="@+id/propertyTypeText"
@@ -53,7 +60,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/propertyImage"
-        android:text="150.000€"
         android:textSize="16sp" />
 
     <ImageView

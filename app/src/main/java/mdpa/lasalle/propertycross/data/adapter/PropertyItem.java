@@ -9,13 +9,14 @@ import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 public class PropertyItem implements AdapterRecyclerMain.PropertyItem<PropertyItem.Property> {
 
     public static class Property implements AdapterRecyclerMain.PropertyItem.Property {
-        private String id, address, price, meters, type;
+        private String id, name, address, price, meters, type;
         private double latitude, longitude;
         private ArrayList<String> images;
         private boolean isFavourite;
 
-        public Property(@NonNull String id, @NonNull String address, ArrayList<String> images, @NonNull String price, @NonNull String meters, @NonNull String type, double latitude, double longitude, boolean isFavourite) {
+        public Property(@NonNull String id, @NonNull String name, @NonNull String address, ArrayList<String> images, @NonNull String price, @NonNull String meters, @NonNull String type, double latitude, double longitude, boolean isFavourite) {
             this.id = id;
+            this.name = name;
             this.address = address;
             this.price = price;
             this.meters = meters;
@@ -29,6 +30,11 @@ public class PropertyItem implements AdapterRecyclerMain.PropertyItem<PropertyIt
         @NonNull @Override
         public String getId() {
             return id;
+        }
+
+        @NonNull @Override
+        public String getName() {
+            return name;
         }
 
         @NonNull @Override

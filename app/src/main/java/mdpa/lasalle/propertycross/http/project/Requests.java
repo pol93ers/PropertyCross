@@ -6,7 +6,7 @@ public class Requests {
         return ourInstance;
     }
 
-    private static String getBaseServerUrl() {
+    public static String getBaseServerUrl() {
         return "http://ls25860.lasalle.ovh";
     }
     private static String getApiServerUrl() {

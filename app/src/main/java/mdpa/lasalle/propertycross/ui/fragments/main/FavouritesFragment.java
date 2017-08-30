@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,9 +31,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +55,9 @@ import mdpa.lasalle.propertycross.http.project.response.ResponseFavourites;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
 
-public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyFavouriteItem>, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyFavouriteItem>,
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnInfoWindowClickListener{
 
     private RelativeLayout noSessionFavouritesLayout, favouritesLayout;
     private Button sessionFavouritesButton;
@@ -65,6 +70,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     private ArrayList<PropertyFavouriteItem> propertyRentalItems = new ArrayList<>();
     private String idProperty;
 
+    private GoogleMap googleMap;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
 
@@ -136,8 +142,12 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
             adapter.addOnItemClickListener(this);
             favouritesRecyclerView.setAdapter(adapter);
         }else{
-            MapView mapView = (MapView) root.findViewById(R.id.mapView);
-            mapView.getMapAsync(this);
+            SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+            ft.replace(R.id.mapView, mapFragment, "SupportMapFragment");
+            ft.commit();
+
+            mapFragment.getMapAsync(this);
         }
 
         emptyMapText = (TextView) root.findViewById(R.id.emptyMapText);
@@ -246,6 +256,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap = googleMap;
         try {
             // Zoom googleMap camera un initial position.
             googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -286,55 +297,66 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     }
 
     private void setListeners(){
-        sessionFavouritesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginActivityListener.onLoginActivity();
-            }
-        });
+        if (sessionFavouritesButton != null) {
+            sessionFavouritesButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loginActivityListener.onLoginActivity();
+                }
+            });
+        }
 
-        favouritesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position == 0){
-                    if (!propertySaleItems.isEmpty()){
-                        propertyItems = propertySaleItems;
-                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
-                        numFavouritesTextView.setText(numberProperties);
-                        adapter.setItems(propertyItems);
-                    }else{
-                        numFavouritesTextView.setText(R.string.results_not_found);
-                        adapter.clearItems();
-                    }
-                }else{
-                    if (!propertyRentalItems.isEmpty()){
-                        propertyItems = propertyRentalItems;
-                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
-                        numFavouritesTextView.setText(numberProperties);
-                        adapter.setItems(propertyItems);
-                    }else{
-                        numFavouritesTextView.setText(R.string.results_not_found);
-                        adapter.clearItems();
+        if(favouritesTabLayout != null) {
+            favouritesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    int position = tab.getPosition();
+                    if (position == 0) {
+                        if (!propertySaleItems.isEmpty()) {
+                            propertyItems = propertySaleItems;
+                            String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                            numFavouritesTextView.setText(numberProperties);
+                            adapter.setItems(propertyItems);
+                        } else {
+                            numFavouritesTextView.setText(R.string.results_not_found);
+                            adapter.clearItems();
+                        }
+                    } else {
+                        if (!propertyRentalItems.isEmpty()) {
+                            propertyItems = propertyRentalItems;
+                            String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                            numFavouritesTextView.setText(numberProperties);
+                            adapter.setItems(propertyItems);
+                        } else {
+                            numFavouritesTextView.setText(R.string.results_not_found);
+                            adapter.clearItems();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            }
+                }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-            }
-        });
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        propertyFragmentListener.onPropertyFragment((String)marker.getTag());
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_fragment_main, menu);
+        if (ApplicationPropertyCross.getInstance().preferences().getLoginApiKey() != null) {
+            inflater.inflate(R.menu.menu_fragment_main, menu);
+        }
     }
 
     @Override
@@ -469,6 +491,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)) {
             propertySaleItems = new ArrayList<>();
             propertyRentalItems = new ArrayList<>();
+            googleMap.clear();
             ArrayList<Property> properties = ((ResponseFavourites) response).getFavourites();
             if (properties.size() > 0) {
                 String numberProperties = properties.size() + getString(R.string.properties);
@@ -476,18 +499,28 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                 for (int i = 0; i < properties.size(); i++) {
                     if (properties.get(i).getPropertyType().equals(getString(R.string.sale))){
                         propertySaleItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
-                                properties.get(i).getAddress(), properties.get(i).getImages(),
+                                properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                 String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                                 properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
                                 properties.get(i).getPropertyType())));
                     }else{
                         propertyRentalItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
-                                properties.get(i).getAddress(), properties.get(i).getImages(),
+                                properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                 String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                                 properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
                                 properties.get(i).getPropertyType())));
                     }
 
+                    LatLng latLng = new LatLng(properties.get(i).getLocation().getLatitude(),
+                            properties.get(i).getLocation().getLongitude());
+
+                    Marker property = googleMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(properties.get(i).getAddress())
+                            .snippet(properties.get(i).getName()));
+                    property.setTag(properties.get(i).getId());
+
+                    googleMap.setOnInfoWindowClickListener(this);
                 }
             }
 
@@ -509,7 +542,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
             if (numberPropertiesMapText != null) {
                 if (properties.size() != 0){
-                    numberPropertiesMapText.setText(String.valueOf(properties.size()));
+                    numberPropertiesMapText.setText(properties.size() + " " + getString(R.string.properties));
                     emptyMapText.setVisibility(View.GONE);
                 }else{
                     numberPropertiesMapText.setVisibility(View.GONE);

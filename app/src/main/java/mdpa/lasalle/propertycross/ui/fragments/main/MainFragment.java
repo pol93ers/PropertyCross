@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,9 +31,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +57,9 @@ import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 import mdpa.lasalle.propertycross.ui.activities.SearchActivity;
 import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
 
-public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyItem>, OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyItem>,
+        OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnInfoWindowClickListener {
 
     private FloatingActionButton searchFAB;
     private TextView numberPropertiesText, emptyMapText, numberPropertiesMapText;
@@ -73,6 +78,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
     private String idProperty;
     private boolean isSearch;
 
+    private GoogleMap googleMap;
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
 
@@ -148,8 +154,12 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
             adapter.addOnItemClickListener(this);
             recyclerProperties.setAdapter(adapter);
         }else{
-            MapView mapView = (MapView) root.findViewById(R.id.mapView);
-            mapView.getMapAsync(this);
+            SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+            ft.replace(R.id.mapView, mapFragment, "SupportMapFragment");
+            ft.commit();
+
+            mapFragment.getMapAsync(this);
         }
         emptyMapText = (TextView) root.findViewById(R.id.emptyMapText);
         numberPropertiesMapText = (TextView) root.findViewById(R.id.numPropertiesMap);
@@ -261,6 +271,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
+        this.googleMap = googleMap;
         try {
             // Zoom googleMap camera un initial position.
             googleMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -382,43 +393,45 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
             });
         }
 
-        propertiesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                if (position == 0){
-                    if (!propertySaleItems.isEmpty()){
-                        propertyItems = propertySaleItems;
-                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
-                        numberPropertiesText.setText(numberProperties);
-                        adapter.setItems(propertyItems);
-                    }else{
-                        numberPropertiesText.setText(R.string.results_not_found);
-                        adapter.clearItems();
-                    }
-                }else{
-                    if (!propertyRentalItems.isEmpty()){
-                        propertyItems = propertyRentalItems;
-                        String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
-                        numberPropertiesText.setText(numberProperties);
-                        adapter.setItems(propertyItems);
-                    }else{
-                        numberPropertiesText.setText(R.string.results_not_found);
-                        adapter.clearItems();
+        if(propertiesTabLayout != null) {
+            propertiesTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    int position = tab.getPosition();
+                    if (position == 0) {
+                        if (!propertySaleItems.isEmpty()) {
+                            propertyItems = propertySaleItems;
+                            String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                            numberPropertiesText.setText(numberProperties);
+                            adapter.setItems(propertyItems);
+                        } else {
+                            numberPropertiesText.setText(R.string.results_not_found);
+                            adapter.clearItems();
+                        }
+                    } else {
+                        if (!propertyRentalItems.isEmpty()) {
+                            propertyItems = propertyRentalItems;
+                            String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
+                            numberPropertiesText.setText(numberProperties);
+                            adapter.setItems(propertyItems);
+                        } else {
+                            numberPropertiesText.setText(R.string.results_not_found);
+                            adapter.clearItems();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
 
-            }
+                }
 
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     @Override
@@ -431,6 +444,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                     propertySaleItems = new ArrayList<>();
                     propertyRentalItems = new ArrayList<>();
                     properties = (ArrayList<Property>) data.getSerializableExtra("properties");
+                    googleMap.clear();
                     int numberProperties = properties.size();
                     for (int i=0;i<numberProperties;i++) {
                         boolean isFavourite = false;
@@ -444,15 +458,26 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                         }
                         if (properties.get(i).getPropertyType().equals(getString(R.string.sale))){
                             propertySaleItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
-                                    properties.get(i).getAddress(), properties.get(i).getImages(),
+                                    properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                     String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                                     properties.get(i).getPropertyType(), properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(), isFavourite)));
                         }else{
                             propertyRentalItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
-                                    properties.get(i).getAddress(), properties.get(i).getImages(),
+                                    properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                     String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                                     properties.get(i).getPropertyType(), properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(), isFavourite)));
                         }
+
+                        LatLng latLng = new LatLng(properties.get(i).getLocation().getLatitude(),
+                                properties.get(i).getLocation().getLongitude());
+
+                        Marker property = googleMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(properties.get(i).getAddress())
+                                .snippet(properties.get(i).getName()));
+                        property.setTag(properties.get(i).getId());
+
+                        googleMap.setOnInfoWindowClickListener(this);
                     }
 
                     if (propertiesTabLayout.getSelectedTabPosition() == 0){
@@ -473,6 +498,7 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
 
                     if (numberPropertiesMapText != null) {
                         if (numberProperties != 0){
+                            numberPropertiesMapText.setVisibility(View.VISIBLE);
                             numberPropertiesMapText.setText(String.valueOf(numberProperties));
                             emptyMapText.setVisibility(View.GONE);
                         }else{
@@ -483,6 +509,12 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Log.e("GET TAG", (String)marker.getTag());
+        propertyFragmentListener.onPropertyFragment((String)marker.getTag());
     }
 
     @Override
@@ -536,6 +568,9 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
             propertySaleItems = new ArrayList<>();
             propertyRentalItems = new ArrayList<>();
             properties = ((ResponseProperties) response).getProperties();
+            if (googleMap != null){
+                googleMap.clear();
+            }
             int numberProperties = properties.size();
             for (int i=0;i<numberProperties;i++) {
                 boolean isFavourite = false;
@@ -549,30 +584,56 @@ public class MainFragment extends FragmentBase implements AdapterRecyclerBase.On
                 }
                 if (properties.get(i).getPropertyType().equals(getString(R.string.sale))){
                     propertySaleItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
-                            properties.get(i).getAddress(), properties.get(i).getImages(),
+                            properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                             String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                             properties.get(i).getPropertyType(), properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(), isFavourite)));
                 }else{
                     propertyRentalItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
-                            properties.get(i).getAddress(), properties.get(i).getImages(),
+                            properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                             String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
                             properties.get(i).getPropertyType(), properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(), isFavourite)));
                 }
+
+                if(googleMap != null) {
+                    LatLng latLng = new LatLng(properties.get(i).getLocation().getLatitude(),
+                            properties.get(i).getLocation().getLongitude());
+
+                    Marker property = googleMap.addMarker(new MarkerOptions()
+                            .position(latLng)
+                            .title(properties.get(i).getAddress())
+                            .snippet(properties.get(i).getName()));
+                    property.setTag(properties.get(i).getId());
+
+                    googleMap.setOnInfoWindowClickListener(this);
+                }
             }
 
-            if (propertiesTabLayout.getSelectedTabPosition() == 0){
-                if (!propertySaleItems.isEmpty()){
-                    propertyItems = propertySaleItems;
-                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
-                    numberPropertiesText.setText(numProperties);
-                    adapter.setItems(propertyItems);
+            if(propertiesTabLayout != null) {
+                if (propertiesTabLayout.getSelectedTabPosition() == 0) {
+                    if (!propertySaleItems.isEmpty()) {
+                        propertyItems = propertySaleItems;
+                        String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numberPropertiesText.setText(numProperties);
+                        adapter.setItems(propertyItems);
+                    }
+                } else {
+                    if (!propertyRentalItems.isEmpty()) {
+                        propertyItems = propertyRentalItems;
+                        String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                        numberPropertiesText.setText(numProperties);
+                        adapter.setItems(propertyItems);
+                    }
                 }
-            }else{
-                if (!propertyRentalItems.isEmpty()){
-                    propertyItems = propertyRentalItems;
-                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
-                    numberPropertiesText.setText(numProperties);
-                    adapter.setItems(propertyItems);
+            }
+
+            if (numberPropertiesMapText != null) {
+                if (numberProperties != 0){
+                    numberPropertiesMapText.setVisibility(View.VISIBLE);
+                    numberPropertiesMapText.setText(numberProperties + " " + getString(R.string.properties));
+                    emptyMapText.setVisibility(View.GONE);
+                }else{
+                    numberPropertiesMapText.setVisibility(View.GONE);
+                    emptyMapText.setVisibility(View.VISIBLE);
                 }
             }
         }

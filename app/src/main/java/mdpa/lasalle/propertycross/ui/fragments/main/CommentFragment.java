@@ -76,7 +76,7 @@ public class CommentFragment extends FragmentBase {
                             Requests.Values.POST_COMMENT,
                             idProperty + "/comments",
                             new RequestAddComment(comment,
-                                    ApplicationPropertyCross.getInstance().preferences().getUserId(), null),
+                                    ApplicationPropertyCross.getInstance().preferences().getUserId()),
                             ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
                             ApplicationPropertyCross.getInstance().preferences().getUserId(),
                             null

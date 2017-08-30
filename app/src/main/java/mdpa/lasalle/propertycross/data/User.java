@@ -10,16 +10,14 @@ public class User implements Serializable{
     @SerializedName("surname") private String surname;
     @SerializedName("password") private String password;
     @SerializedName("email") private String email;
-    @SerializedName("url_image") private String url_image;
     @SerializedName("isNotification") private boolean isNotification;
 
-    public User(String username, String name, String surname, String password, String email, String url_image, boolean isNotification) {
+    public User(String username, String name, String surname, String password, String email, boolean isNotification) {
         this.username = username;
         this.name = name;
         this.surname = surname;
         this.password = password;
         this.email = email;
-        this.url_image = url_image;
         this.isNotification = isNotification;
     }
 
@@ -63,14 +61,6 @@ public class User implements Serializable{
         this.email = email;
     }
 
-    public String getUrl_image() {
-        return url_image;
-    }
-
-    public void setUrl_image(String url_image) {
-        this.url_image = url_image;
-    }
-
     public boolean isNotification() {
         return isNotification;
     }
@@ -87,7 +77,6 @@ public class User implements Serializable{
                 ", surname='" + surname + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", url_image='" + url_image + '\'' +
                 ", isNotification=" + isNotification +
                 '}';
     }

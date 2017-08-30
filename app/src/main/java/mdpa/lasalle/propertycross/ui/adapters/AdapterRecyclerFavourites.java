@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
+import mdpa.lasalle.propertycross.http.project.Requests;
 import mdpa.lasalle.propertycross.ui.fragments.main.FavouritesFragment;
 
 public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.PropertyItem> extends AdapterRecyclerBase<I, AdapterRecyclerBase.BindableViewHolder<I>>{
@@ -39,6 +40,7 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
         interface Property{
             @NonNull ArrayList<String> getPhotos();
             @NonNull String getId();
+            @NonNull String getName();
             @NonNull String getAddress();
             @NonNull String getMeters();
             @NonNull String getPrice();
@@ -57,10 +59,14 @@ public class AdapterRecyclerFavourites<I extends AdapterRecyclerFavourites.Prope
     @Override
     public void onBindViewHolder(final BindableViewHolder<I> holder, int position) {
         super.onBindViewHolder(holder, position);
-        Glide.with(context).load(Uri.parse(holder.item.getProperty().getPhotos().get(0))).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
+        Glide.with(context).load(Uri.parse(Requests.getBaseServerUrl() + holder.item.getProperty().getPhotos().get(0))).into((ImageView) holder.itemView.findViewById(R.id.propertyImage));
+        ((TextView)holder.itemView.findViewById(R.id.propertyNameText)).setText(holder.item.getProperty().getName());
         ((TextView)holder.itemView.findViewById(R.id.propertyAddressText)).setText(holder.item.getProperty().getAddress());
         ((TextView)holder.itemView.findViewById(R.id.propertyMetersText)).setText(holder.item.getProperty().getMeters());
-        ((TextView)holder.itemView.findViewById(R.id.propertyPriceText)).setText(holder.item.getProperty().getPrice());
+        String meters = holder.item.getProperty().getMeters() + "m2";
+        ((TextView)holder.itemView.findViewById(R.id.propertyMetersText)).setText(meters);
+        String price = holder.item.getProperty().getPrice() + "€";
+        ((TextView)holder.itemView.findViewById(R.id.propertyPriceText)).setText(price);
         ((TextView)holder.itemView.findViewById(R.id.propertyTypeText)).setText(holder.item.getProperty().getType());
         ((ImageView)holder.itemView.findViewById(R.id.propertyFavouriteImage)).setImageResource(R.drawable.ic_favorite_black_24dp);
 

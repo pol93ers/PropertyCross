@@ -2,6 +2,7 @@ package mdpa.lasalle.propertycross.ui.fragments.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -19,9 +21,6 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 
 public class MapFragment extends FragmentBase implements OnMapReadyCallback {
-
-    private GoogleMap map;
-    private MapView mapView;
 
     private double latitude, longitude;
 
@@ -53,79 +52,27 @@ public class MapFragment extends FragmentBase implements OnMapReadyCallback {
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         setHasOptionsMenu(true);
 
-        mapView = (MapView) root.findViewById(R.id.mapView);
-        mapView.onCreate(savedInstanceState);
-        try{
-            MapsInitializer.initialize(getContext());
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.replace(R.id.mapView, mapFragment, "SupportMapFragment");
+        ft.commit();
 
-        mapView.getMapAsync(this);
+        mapFragment.getMapAsync(this);
 
         return root;
     }
 
     @Override
     public void onMapReady(final GoogleMap googleMap) {
-        map = googleMap;
         LatLng markerLocation = new LatLng(latitude, longitude);
-        map.clear();
+        googleMap.clear();
 
-        map.addMarker(new MarkerOptions()
+        googleMap.addMarker(new MarkerOptions()
                 .position(markerLocation)
         );
-        map.animateCamera(CameraUpdateFactory.newLatLng(
+        googleMap.animateCamera(CameraUpdateFactory.newLatLng(
                 markerLocation
         ));
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(mapView != null){
-            mapView.onDestroy();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(mapView != null){
-            mapView.onPause();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if(mapView != null){
-            mapView.onStop();
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        if(mapView != null){
-            mapView.onStart();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(mapView != null){
-            mapView.onResume();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(mapView != null){
-            mapView.onSaveInstanceState(outState);
-        }
     }
 
     @Override

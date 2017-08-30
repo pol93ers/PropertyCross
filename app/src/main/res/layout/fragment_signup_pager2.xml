@@ -4,26 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp">
-
-        <ImageView
-            android:id="@+id/signUpImage"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            app:srcCompat="@drawable/default_user" />
-
-        <ImageView
-            android:id="@+id/addSignUpImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:src="@drawable/ic_select_photo_profile" />
-    </FrameLayout>
-
     <EditText
         android:id="@+id/emailSignUpEditText"
         android:layout_width="match_parent"

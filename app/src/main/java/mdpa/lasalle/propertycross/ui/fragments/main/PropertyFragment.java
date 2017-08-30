@@ -123,7 +123,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
         commentsRecycler = (RecyclerView) root.findViewById(R.id.commentsRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         commentsRecycler.setLayoutManager(linearLayoutManager);
-        adapterRecyclerComments = new AdapterRecyclerComments(getContext());
+        adapterRecyclerComments = new AdapterRecyclerComments();
         commentsRecycler.setAdapter(adapterRecyclerComments);
 
         setListeners();
@@ -243,7 +243,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
             LayoutInflater inflater = LayoutInflater.from(context);
             ViewGroup layout = (ViewGroup) inflater.inflate(R.layout.property_image_view, container, false);
             ImageView propertyImage = (ImageView) layout.findViewById(R.id.propertyItemImage);
-            Glide.with(getContext()).load(images.get(position)).into(propertyImage);
+            Glide.with(getContext()).load(Requests.getBaseServerUrl() + images.get(position)).into(propertyImage);
             container.addView(layout);
             return layout;
         }
@@ -259,23 +259,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
 
     @Override
     public void onPageSelected(int position) {
-        /*switch (position){
-            case 0:
-                indicatorTutorial1.setImageResource(R.drawable.circle_focus);
-                indicatorTutorial2.setImageResource(R.drawable.circle_unfocus_white);
-                indicatorTutorial3.setImageResource(R.drawable.circle_unfocus_white);
-                break;
-            case 1:
-                indicatorTutorial1.setImageResource(R.drawable.circle_unfocus_white);
-                indicatorTutorial2.setImageResource(R.drawable.circle_focus);
-                indicatorTutorial3.setImageResource(R.drawable.circle_unfocus_white);
-                break;
-            case 2:
-                indicatorTutorial1.setImageResource(R.drawable.circle_unfocus_white);
-                indicatorTutorial2.setImageResource(R.drawable.circle_unfocus_white);
-                indicatorTutorial3.setImageResource(R.drawable.circle_focus);
-                break;
-        }*/
+
     }
 
     @Override
@@ -356,7 +340,7 @@ public class PropertyFragment extends FragmentBase implements ViewPager.OnPageCh
                 ArrayList<CommentItem> commentItems = new ArrayList<>();
                 for (int i=0; i<comments.size(); i++){
                     commentItems.add(new CommentItem(new CommentItem.Comment(comments.get(i).getUser().getUsername(),
-                            comments.get(i).getContent(),comments.get(i).getCreatedAt(), comments.get(i).getImages())));
+                            comments.get(i).getContent(),comments.get(i).getCreatedAt())));
                 }
                 adapterRecyclerComments.setItems(commentItems);
             }else{

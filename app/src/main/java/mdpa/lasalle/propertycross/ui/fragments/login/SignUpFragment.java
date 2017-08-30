@@ -2,12 +2,6 @@ package mdpa.lasalle.propertycross.ui.fragments.login;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
@@ -17,17 +11,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Switch;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.theartofdev.edmodo.cropper.CropImage;
-
-import java.io.IOException;
 
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
@@ -37,15 +22,10 @@ import mdpa.lasalle.propertycross.http.project.request.RequestSignUp;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
-import mdpa.lasalle.propertycross.util.CircleTransform;
-import mdpa.lasalle.propertycross.util.ImageChooser;
 
 public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChangeListener{
 
-    private static final int SELECT_PICTURE = 1;
-
     private ViewPager signupPager;
-    private ImageView signupProfileImage;
 
     private String username, password;
 
@@ -94,7 +74,6 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
                 return true;
             }
         });
-        //signupPager.onInterceptTouchEvent(new MotionEvent());
         signupPager.addOnPageChangeListener(this);
         AdapterPagerSignUp pagerRegisterAdapter = new AdapterPagerSignUp(getContext());
         signupPager.setAdapter(pagerRegisterAdapter);
@@ -115,33 +94,6 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
     @Override
     public void onPageScrollStateChanged(int state) {
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case SELECT_PICTURE:
-                if(resultCode == -1) {
-                    Uri imageUri = ImageChooser.getInstance().getImage(data);
-
-                    CropImage.activity(imageUri)
-                            .start(getContext(), this);
-                }
-                break;
-            case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
-                if(resultCode == -1) {
-                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                    Uri croppedImageUri = result.getUri();
-                    Glide.with(getContext())
-                            .load(croppedImageUri)
-                            .placeholder(R.drawable.default_user)
-                            .transform(new CircleTransform(getContext()))
-                            .crossFade()
-                            .into(signupProfileImage);
-                }
-                break;
-        }
     }
 
     private class AdapterPagerSignUp extends PagerAdapter {
@@ -203,30 +155,11 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
                     break;
                 case 1:
                     layout = (ViewGroup) inflater.inflate(R.layout.fragment_signup_pager2, container, false);
-                    signupProfileImage = (ImageView) layout.findViewById(R.id.signUpImage);
-                    ImageView addImage = (ImageView) layout.findViewById(R.id.addSignUpImage);
                     final EditText emailEditText = (EditText) layout.findViewById(R.id.emailSignUpEditText);
                     final EditText nameEditText = (EditText) layout.findViewById(R.id.nameSignUpEditText);
                     final EditText surnameEditText = (EditText) layout.findViewById(R.id.surnameSignUpEditText);
                     final Switch notificationsSwitch = (Switch) layout.findViewById(R.id.notificationsSignUpSwitch);
                     Button signUpButton = (Button) layout.findViewById(R.id.signUpButton);
-
-                    addImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent getImage;
-                            try {
-                                getImage = ImageChooser.getInstance().getIntent(
-                                        getContext().getPackageManager(),
-                                        getString(R.string.select_photo)
-                                );
-                            } catch (IOException e) {
-                                getImage = ImageChooser.getGalleryIntent();
-                            }
-
-                            startActivityForResult(getImage, SELECT_PICTURE);
-                        }
-                    });
 
                     signUpButton.setOnClickListener(new View.OnClickListener() {
                         @Override
