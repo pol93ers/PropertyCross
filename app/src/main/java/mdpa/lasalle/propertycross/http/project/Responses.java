@@ -36,7 +36,7 @@ public class Responses {
             return getFromBodyJson(httpResponse, ResponseError.class, requestId);
         } else if (requestId.equals(Requests.Values.POST_COMMENT.id)){
             return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
-        } else if (requestId.equals(Requests.Values.POST_INC_VIEWS.id)){
+        } else if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)){
             return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_PROPERTY.id)){
             return getFromBodyJson(httpResponse, ResponseProperty.class, requestId);
@@ -52,11 +52,11 @@ public class Responses {
         } else if (requestId.equals(Requests.Values.POST_LOGIN.id)){
             return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
         } else if (requestId.equals(Requests.Values.POST_SIGN_UP.id)){
-            return getFromBodyJson(httpResponse, ResponseLogin.class, requestId);
+            return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
         } else if (requestId.equals(Requests.Values.POST_UPDATE_USER.id)){
             return getFromBodyJson(httpResponse, ResponseUser.class, requestId);
 
-        } else if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)){
+        } else if (requestId.equals(Requests.Values.PUT_ADD_FAVOURITE.id)){
             return getFromBodyJson(httpResponse, ResponseGeneric.class, requestId);
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)){
             return getFromBodyJson(httpResponse, ResponseFavourites.class, requestId);

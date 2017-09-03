@@ -27,7 +27,7 @@ public interface Component {
 
         LastSearchesFragment("LastSearchesFragment"),
 
-        AdapterRecyclerMain("AdapterRecyclerMain"),
+        AdapterRecyclerMain("AdapterRecyclerProperties"),
         AdapterRecyclerFavourites("AdapterRecyclerFavourites"),
         AdapterRecyclerComments("AdapterRecyclerComments"),
         AdapterLastSearches("AdapterLastSearches"),

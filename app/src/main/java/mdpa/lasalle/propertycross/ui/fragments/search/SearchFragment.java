@@ -60,7 +60,7 @@ public class SearchFragment extends FragmentBase{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.GET_PROPERTIES);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.SEARCH_PROPERTIES);
     }
 
     @Override
@@ -123,11 +123,11 @@ public class SearchFragment extends FragmentBase{
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isLocation){
-                    String urlSearch = "?type=" + type + "&matchSearch=" + search;
+                if(!isLocation){
+                    String urlSearch = "?address=" + search;
                     getHttpManager().callStart(
                             Http.RequestType.GET,
-                            Requests.Values.GET_PROPERTIES,
+                            Requests.Values.SEARCH_PROPERTIES,
                             urlSearch,
                             null,
                             null,
@@ -135,10 +135,10 @@ public class SearchFragment extends FragmentBase{
                             null
                     );
                 }else{
-                    String urlSearch = "?lat=" + latitude + "&lng=" + longitude + "&type=" + type;
+                    String urlSearch = "?lat=" + latitude + "&lng=" + longitude;
                     getHttpManager().callStart(
                             Http.RequestType.GET,
-                            Requests.Values.GET_PROPERTIES,
+                            Requests.Values.SEARCH_PROPERTIES,
                             urlSearch,
                             null,
                             null,
@@ -182,7 +182,7 @@ public class SearchFragment extends FragmentBase{
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.GET_PROPERTIES.id)) {
+        if (requestId.equals(Requests.Values.SEARCH_PROPERTIES.id)) {
 
         }
     }
@@ -190,7 +190,7 @@ public class SearchFragment extends FragmentBase{
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.GET_PROPERTIES.id)) {
+        if (requestId.equals(Requests.Values.SEARCH_PROPERTIES.id)) {
             ArrayList<Property> properties = ((ResponseProperties) response).getProperties();
             listener.onSearch(properties);
         }

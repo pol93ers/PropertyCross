@@ -16,20 +16,21 @@ public class Requests {
     public enum Values {
         //Properties
         POST_COMMENT("postComment", getApiServerUrl() + "/properties/"),
-        POST_INC_VIEWS("postIncViews", getApiServerUrl() + "/properties/"),
+        PUT_INC_VIEWS("postIncViews", getApiServerUrl() + "/properties/"),
         GET_PROPERTY("getProperty", getApiServerUrl() + "/properties/"),
         GET_COMMENTS_PROPERTY("getCommentsProperty", getApiServerUrl() + "/properties/"),
         GET_PROPERTIES("getProperties", getApiServerUrl() + "/properties"),
+        SEARCH_PROPERTIES("searchProperties", getApiServerUrl() + "/search/properties"),
 
         //Session
         DELETE_USER("deleteUser", getApiServerUrl() + "/profile"),
-        GET_USER("getUser", getApiServerUrl() + "/profile/"),
+        GET_USER("getUser", getApiServerUrl() + "/profile"),
         POST_LOGIN("postLogin", getApiServerUrl() + "/login"),
-        POST_SIGN_UP("postSignUp", getApiServerUrl() + "/signup"),
+        POST_SIGN_UP("postSignUp", getApiServerUrl() + "/register"),
         POST_UPDATE_USER("postUpdateUser", getApiServerUrl() + "/profile"),
 
         //Users
-        POST_ADD_FAVOURITE("postAddFavourite", getApiServerUrl() + "/users/favourites/"),
+        PUT_ADD_FAVOURITE("postAddFavourite", getApiServerUrl() + "/users/favourites/"),
         GET_FAVOURITES("getFavourites", getApiServerUrl() + "/users/favourites"),
         GET_IS_FAVOURITE("getIsFavourites", getApiServerUrl() + "/users/favourites/");
         public final String id;

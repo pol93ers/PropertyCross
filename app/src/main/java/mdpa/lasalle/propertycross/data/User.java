@@ -3,22 +3,52 @@ package mdpa.lasalle.propertycross.data;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable{
     @SerializedName("username") private String username;
     @SerializedName("name") private String name;
     @SerializedName("surname") private String surname;
-    @SerializedName("password") private String password;
-    @SerializedName("email") private String email;
+    @SerializedName("emails") private ArrayList<Email> email;
     @SerializedName("isNotification") private boolean isNotification;
 
-    public User(String username, String name, String surname, String password, String email, boolean isNotification) {
+    public class Email implements Serializable{
+        @SerializedName("address") private String address;
+
+        public Email(String address) {
+            this.address = address;
+        }
+
+        public String getAddress() {
+            return address;
+        }
+
+        public void setAddress(String address) {
+            this.address = address;
+        }
+
+        @Override
+        public String toString() {
+            return "Email{" +
+                    "address='" + address + '\'' +
+                    '}';
+        }
+    }
+
+    public User(String username, String name, String surname, ArrayList<Email> email, boolean isNotification) {
         this.username = username;
         this.name = name;
         this.surname = surname;
-        this.password = password;
         this.email = email;
         this.isNotification = isNotification;
+    }
+
+    public void setEmail(ArrayList<Email> email) {
+        this.email = email;
+    }
+
+    public ArrayList<Email> getEmail() {
+        return email;
     }
 
     public String getUsername() {
@@ -45,22 +75,6 @@ public class User implements Serializable{
         this.surname = surname;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public boolean isNotification() {
         return isNotification;
     }
@@ -75,7 +89,6 @@ public class User implements Serializable{
                 "username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", isNotification=" + isNotification +
                 '}';

@@ -29,7 +29,7 @@
         android:background="@color/white_transparent"
         android:ems="10"
         android:hint="@string/name"
-        android:inputType="textPersonName"
+        android:inputType="textCapWords|textPersonName"
         android:padding="15dp"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white" />
@@ -44,7 +44,7 @@
         android:background="@color/white_transparent"
         android:ems="10"
         android:hint="@string/surname"
-        android:inputType="textPersonName"
+        android:inputType="textCapWords|textPersonName"
         android:padding="15dp"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white" />

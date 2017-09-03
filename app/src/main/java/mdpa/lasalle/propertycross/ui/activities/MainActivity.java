@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,8 +13,10 @@ import android.view.View;
 import mdpa.lasalle.propertycross.ApplicationPropertyCross;
 import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.activity.ActivityBase;
+import mdpa.lasalle.propertycross.data.Property;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestEmpty;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.ui.fragments.main.CommentFragment;
@@ -34,6 +37,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
         PropertyFragment.OnCommentFragmentListener{
 
     private boolean isMain;
+    private int position_favourite;
 
     @NonNull
     @Override
@@ -50,7 +54,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getHttpManager().receiverRegister(this, Requests.Values.POST_ADD_FAVOURITE);
+        getHttpManager().receiverRegister(this, Requests.Values.PUT_ADD_FAVOURITE);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -119,18 +123,19 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     }
 
     @Override
-    public void onPropertyFragment(String idProperty) {
-        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, PropertyFragment.newInstance(idProperty), true, true);
+    public void onPropertyFragment(Property property) {
+        FragmentManagerUtils.fragmentReplace(getSupportFragmentManager(), R.id.activity_content, PropertyFragment.newInstance(property), true, true);
     }
 
     @Override
-    public void onFavouriteUpdate(String idProperty, boolean isMain) {
+    public void onFavouriteUpdate(String idProperty, boolean isMain, int position_favourite) {
         this.isMain = isMain;
+        this.position_favourite = position_favourite;
         getHttpManager().callStart(
-                Http.RequestType.POST,
-                Requests.Values.POST_ADD_FAVOURITE,
+                Http.RequestType.PUT,
+                Requests.Values.PUT_ADD_FAVOURITE,
                 idProperty,
-                null,
+                new RequestEmpty(),
                 ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
                 ApplicationPropertyCross.getInstance().preferences().getUserId(),
                 null
@@ -145,7 +150,7 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
+        if (requestId.equals(Requests.Values.PUT_ADD_FAVOURITE.id)) {
 
         }
     }
@@ -153,8 +158,14 @@ public class MainActivity extends ActivityBase implements BottomNavigationView.O
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.POST_ADD_FAVOURITE.id)) {
-
+        if (requestId.equals(Requests.Values.PUT_ADD_FAVOURITE.id)) {
+            if (!isMain){
+                Fragment fragment;
+                fragment = FragmentManagerUtils.findFragment(getSupportFragmentManager(),FavouritesFragment.class,ID.FavouritesFragment);
+                if(fragment != null){
+                    ((FavouritesFragment)fragment).removeFavourite(position_favourite);
+                }
+            }
         }
     }
 }

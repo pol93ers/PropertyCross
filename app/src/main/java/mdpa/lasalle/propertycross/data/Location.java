@@ -4,37 +4,38 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Location implements Serializable {
-    @SerializedName("lat") private double latitude;
-    @SerializedName("lng") private double longitude;
+    @SerializedName("type") private String type;
+    @SerializedName("coordinates") private double coordinates[];
 
-    public Location(double latitude, double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Location(String type, double[] coordinates) {
+        this.type = type;
+        this.coordinates = coordinates;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getType() {
+        return type;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double[] getCoordinates() {
+        return coordinates;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setCoordinates(double[] coordinates) {
+        this.coordinates = coordinates;
     }
 
     @Override
     public String toString() {
         return "Location{" +
-                "latitude=" + latitude +
-                ", longitude=" + longitude +
+                "type='" + type + '\'' +
+                ", coordinates=" + Arrays.toString(coordinates) +
                 '}';
     }
 }

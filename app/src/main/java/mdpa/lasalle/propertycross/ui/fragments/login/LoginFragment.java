@@ -21,9 +21,9 @@ import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 
 public class LoginFragment extends FragmentBase {
 
-    private EditText usernameEditText, passwordEditText;
+    private EditText emailEditText, passwordEditText;
     private Button loginButton;
-    private String username, password;
+    private String email, password;
 
     @NonNull
     @Override
@@ -57,7 +57,7 @@ public class LoginFragment extends FragmentBase {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
-        usernameEditText = (EditText) root.findViewById(R.id.userEditText);
+        emailEditText = (EditText) root.findViewById(R.id.userEditText);
         passwordEditText = (EditText) root.findViewById(R.id.passwordEditText);
         loginButton = (Button) root.findViewById(R.id.loginButton);
 
@@ -70,14 +70,14 @@ public class LoginFragment extends FragmentBase {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isEmpty(usernameEditText) && !isEmpty(passwordEditText)){
-                    username = usernameEditText.getText().toString();
+                if(!isEmpty(emailEditText) && !isEmpty(passwordEditText)){
+                    email = emailEditText.getText().toString();
                     password = passwordEditText.getText().toString();
                     getHttpManager().callStart(
                             Http.RequestType.POST,
                             Requests.Values.POST_LOGIN,
                             null,
-                            new RequestLogin(username, password),
+                            new RequestLogin(email, password),
                             null,
                             null,
                             null
@@ -121,8 +121,8 @@ public class LoginFragment extends FragmentBase {
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
         if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
-            String userID = ((ResponseLogin)response).getUserId();
-            String authToken = ((ResponseLogin)response).getAuthToken();
+            String userID = ((ResponseLogin)response).getData().getUserId();
+            String authToken = ((ResponseLogin)response).getData().getAuthToken();
             loginListener.onLogin(userID, authToken);
         }
     }

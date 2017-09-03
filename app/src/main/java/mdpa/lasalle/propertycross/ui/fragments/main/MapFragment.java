@@ -70,8 +70,8 @@ public class MapFragment extends FragmentBase implements OnMapReadyCallback {
         googleMap.addMarker(new MarkerOptions()
                 .position(markerLocation)
         );
-        googleMap.animateCamera(CameraUpdateFactory.newLatLng(
-                markerLocation
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                markerLocation, 15
         ));
     }
 

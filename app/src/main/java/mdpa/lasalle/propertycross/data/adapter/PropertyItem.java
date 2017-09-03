@@ -4,11 +4,11 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 
-import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerMain;
+import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerProperties;
 
-public class PropertyItem implements AdapterRecyclerMain.PropertyItem<PropertyItem.Property> {
+public class PropertyItem implements AdapterRecyclerProperties.PropertyItem<PropertyItem.Property> {
 
-    public static class Property implements AdapterRecyclerMain.PropertyItem.Property {
+    public static class Property implements AdapterRecyclerProperties.PropertyItem.Property {
         private String id, name, address, price, meters, type;
         private double latitude, longitude;
         private ArrayList<String> images;

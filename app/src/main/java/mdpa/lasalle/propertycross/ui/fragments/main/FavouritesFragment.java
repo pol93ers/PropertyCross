@@ -46,16 +46,18 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.adapter.AdapterRecyclerBase;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.data.Property;
-import mdpa.lasalle.propertycross.data.adapter.PropertyFavouriteItem;
+import mdpa.lasalle.propertycross.data.adapter.PropertyItem;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestAddComment;
+import mdpa.lasalle.propertycross.http.project.request.RequestEmpty;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
 import mdpa.lasalle.propertycross.http.project.response.ResponseFavourites;
 import mdpa.lasalle.propertycross.ui.activities.MainActivity;
-import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerFavourites;
+import mdpa.lasalle.propertycross.ui.adapters.AdapterRecyclerProperties;
 
-public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyFavouriteItem>,
+public class FavouritesFragment extends FragmentBase implements AdapterRecyclerBase.OnItemClickListener<PropertyItem>,
         OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,
         GoogleMap.OnInfoWindowClickListener{
 
@@ -64,11 +66,12 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     private TextView numFavouritesTextView, emptyMapText, numberPropertiesMapText;
     private TabLayout favouritesTabLayout;
 
-    private AdapterRecyclerFavourites adapter;
-    private ArrayList<PropertyFavouriteItem> propertyItems = new ArrayList<>();
-    private ArrayList<PropertyFavouriteItem> propertySaleItems = new ArrayList<>();
-    private ArrayList<PropertyFavouriteItem> propertyRentalItems = new ArrayList<>();
-    private String idProperty;
+    private AdapterRecyclerProperties adapter;
+    private ArrayList<PropertyItem> propertyItems = new ArrayList<>();
+    private ArrayList<PropertyItem> propertySaleItems = new ArrayList<>();
+    private ArrayList<PropertyItem> propertyRentalItems = new ArrayList<>();
+    private ArrayList<Property> propertiesSale, propertiesRental, properties;
+    private Property propertyClick;
 
     private GoogleMap googleMap;
     private GoogleApiClient mGoogleApiClient;
@@ -83,12 +86,12 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
     private OnPropertyFragmentListener propertyFragmentListener;
     public interface OnPropertyFragmentListener {
-        void onPropertyFragment(String idProperty);
+        void onPropertyFragment(Property property);
     }
 
     private OnFavouriteUpdateListener favouriteUpdateListener;
     public interface OnFavouriteUpdateListener {
-        void onFavouriteUpdate(String idProperty, boolean isMain);
+        void onFavouriteUpdate(String idProperty, boolean isMain, int positionFavourite);
     }
 
     @NonNull
@@ -113,7 +116,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getHttpManager().receiverRegister(getContext(), Requests.Values.GET_FAVOURITES);
-        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_INC_VIEWS);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.PUT_INC_VIEWS);
     }
 
     @Override
@@ -138,7 +141,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         if (favouritesRecyclerView != null) {
             favouritesRecyclerView.setLayoutManager(linearLayoutManager);
-            adapter = new AdapterRecyclerFavourites(getContext(), favouriteUpdateListener);
+            adapter = new AdapterRecyclerProperties(getContext(), false, favouriteUpdateListener);
             adapter.addOnItemClickListener(this);
             favouritesRecyclerView.setAdapter(adapter);
         }else{
@@ -314,6 +317,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                     if (position == 0) {
                         if (!propertySaleItems.isEmpty()) {
                             propertyItems = propertySaleItems;
+                            properties = propertiesSale;
                             String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
                             numFavouritesTextView.setText(numberProperties);
                             adapter.setItems(propertyItems);
@@ -324,6 +328,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                     } else {
                         if (!propertyRentalItems.isEmpty()) {
                             propertyItems = propertyRentalItems;
+                            properties = propertiesRental;
                             String numberProperties = propertyItems.size() + " " + getString(R.string.properties);
                             numFavouritesTextView.setText(numberProperties);
                             adapter.setItems(propertyItems);
@@ -349,7 +354,7 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        propertyFragmentListener.onPropertyFragment((String)marker.getTag());
+        propertyFragmentListener.onPropertyFragment((Property) marker.getTag());
     }
 
     @Override
@@ -371,9 +376,9 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item){
                             case 0:
-                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                Collections.sort(propertyItems, new Comparator<PropertyItem>() {
                                     @Override
-                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                    public int compare(PropertyItem p1, PropertyItem p2) {
                                         return Integer.parseInt(p1.getProperty().getMeters()) - Integer.parseInt(p2.getProperty().getMeters());
                                     }
                                 });
@@ -381,9 +386,9 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                                 adapter.setItems(propertyItems);
                                 break;
                             case 1:
-                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                Collections.sort(propertyItems, new Comparator<PropertyItem>() {
                                     @Override
-                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                    public int compare(PropertyItem p1, PropertyItem p2) {
                                         return Integer.parseInt(p2.getProperty().getMeters()) - Integer.parseInt(p1.getProperty().getMeters());
                                     }
                                 });
@@ -392,9 +397,9 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                                 break;
                             case 2:
                                 if(mLastLocation != null) {
-                                    Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                    Collections.sort(propertyItems, new Comparator<PropertyItem>() {
                                         @Override
-                                        public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                        public int compare(PropertyItem p1, PropertyItem p2) {
                                             Location l1 = new Location("l1");
                                             l1.setLatitude(p1.getProperty().getLatitude());
                                             l1.setLongitude(p1.getProperty().getLongitude());
@@ -418,9 +423,9 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                                 }
                                 break;
                             case 3:
-                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                Collections.sort(propertyItems, new Comparator<PropertyItem>() {
                                     @Override
-                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                    public int compare(PropertyItem p1, PropertyItem p2) {
                                         return Integer.parseInt(p1.getProperty().getPrice()) - Integer.parseInt(p2.getProperty().getPrice());
                                     }
                                 });
@@ -428,9 +433,9 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                                 adapter.setItems(propertyItems);
                                 break;
                             case 4:
-                                Collections.sort(propertyItems, new Comparator<PropertyFavouriteItem>() {
+                                Collections.sort(propertyItems, new Comparator<PropertyItem>() {
                                     @Override
-                                    public int compare(PropertyFavouriteItem p1, PropertyFavouriteItem p2) {
+                                    public int compare(PropertyItem p1, PropertyItem p2) {
                                         return Integer.parseInt(p2.getProperty().getPrice()) - Integer.parseInt(p1.getProperty().getPrice());
                                     }
                                 });
@@ -455,13 +460,14 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     }
 
     @Override
-    public void onItemClick(PropertyFavouriteItem item, int position, View rowView, int viewType) {
-        idProperty = propertyItems.get(position).getProperty().getId();
+    public void onItemClick(PropertyItem item, int position, View rowView, int viewType) {
+        propertyClick = properties.get(position);
+        String idProperty = propertyItems.get(position).getProperty().getId();
         getHttpManager().callStart(
-                Http.RequestType.POST,
-                Requests.Values.POST_INC_VIEWS,
+                Http.RequestType.PUT,
+                Requests.Values.PUT_INC_VIEWS,
                 idProperty + "/views",
-                null,
+                new RequestEmpty(),
                 null,
                 null,
                 null
@@ -469,74 +475,68 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
     }
 
     @Override
-    public void onItemLongClick(PropertyFavouriteItem item, int position, View rowView, int viewType) {
+    public void onItemLongClick(PropertyItem item, int position, View rowView, int viewType) {
 
     }
 
     @Override
     public void onHttpBroadcastError(String requestId, ResponseError response) {
         super.onHttpBroadcastError(requestId, response);
-        if (requestId.equals(Requests.Values.POST_INC_VIEWS.id)) {
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
 
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)) {
 
         }
     }
 
+    public void removeFavourite(int position_favourite){
+        adapter.removeItem(position_favourite);
+    }
+
     @Override
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
-        if (requestId.equals(Requests.Values.POST_INC_VIEWS.id)) {
-            propertyFragmentListener.onPropertyFragment(idProperty);
+        if (requestId.equals(Requests.Values.PUT_INC_VIEWS.id)) {
+            propertyFragmentListener.onPropertyFragment(propertyClick);
         } else if (requestId.equals(Requests.Values.GET_FAVOURITES.id)) {
             propertySaleItems = new ArrayList<>();
             propertyRentalItems = new ArrayList<>();
-            googleMap.clear();
-            ArrayList<Property> properties = ((ResponseFavourites) response).getFavourites();
-            if (properties.size() > 0) {
-                String numberProperties = properties.size() + getString(R.string.properties);
-                numFavouritesTextView.setText(numberProperties);
+            propertiesRental = new ArrayList<>();
+            propertiesSale = new ArrayList<>();
+            if(googleMap != null) {
+                googleMap.clear();
+            }
+            properties = ((ResponseFavourites) response).getFavourites();
+            if (properties != null) {
                 for (int i = 0; i < properties.size(); i++) {
                     if (properties.get(i).getPropertyType().equals(getString(R.string.sale))){
-                        propertySaleItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
+                        propertiesSale.add(properties.get(i));
+                        propertySaleItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
                                 properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                 String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
-                                properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
-                                properties.get(i).getPropertyType())));
+                                properties.get(i).getPropertyType(), properties.get(i).getLocation().getCoordinates()[0],
+                                properties.get(i).getLocation().getCoordinates()[1], true)));
                     }else{
-                        propertyRentalItems.add(new PropertyFavouriteItem(new PropertyFavouriteItem.Property(properties.get(i).getId(),
+                        propertiesRental.add(properties.get(i));
+                        propertyRentalItems.add(new PropertyItem(new PropertyItem.Property(properties.get(i).getId(),
                                 properties.get(i).getName(), properties.get(i).getAddress(), properties.get(i).getImages(),
                                 String.valueOf(properties.get(i).getPrice()), String.valueOf(properties.get(i).getArea()),
-                                properties.get(i).getLocation().getLatitude(), properties.get(i).getLocation().getLongitude(),
-                                properties.get(i).getPropertyType())));
+                                properties.get(i).getPropertyType(), properties.get(i).getLocation().getCoordinates()[0],
+                                properties.get(i).getLocation().getCoordinates()[1], true)));
                     }
 
-                    LatLng latLng = new LatLng(properties.get(i).getLocation().getLatitude(),
-                            properties.get(i).getLocation().getLongitude());
+                    if(googleMap != null) {
+                        LatLng latLng = new LatLng(properties.get(i).getLocation().getCoordinates()[0],
+                                properties.get(i).getLocation().getCoordinates()[1]);
 
-                    Marker property = googleMap.addMarker(new MarkerOptions()
-                            .position(latLng)
-                            .title(properties.get(i).getAddress())
-                            .snippet(properties.get(i).getName()));
-                    property.setTag(properties.get(i).getId());
+                        Marker property = googleMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(properties.get(i).getName())
+                                .snippet(properties.get(i).getAddress()));
+                        property.setTag(properties.get(i));
 
-                    googleMap.setOnInfoWindowClickListener(this);
-                }
-            }
-
-            if (favouritesTabLayout.getSelectedTabPosition() == 0){
-                if (!propertySaleItems.isEmpty()){
-                    propertyItems = propertySaleItems;
-                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
-                    numFavouritesTextView.setText(numProperties);
-                    adapter.setItems(propertyItems);
-                }
-            }else{
-                if (!propertyRentalItems.isEmpty()){
-                    propertyItems = propertyRentalItems;
-                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
-                    numFavouritesTextView.setText(numProperties);
-                    adapter.setItems(propertyItems);
+                        googleMap.setOnInfoWindowClickListener(this);
+                    }
                 }
             }
 
@@ -549,6 +549,26 @@ public class FavouritesFragment extends FragmentBase implements AdapterRecyclerB
                     emptyMapText.setVisibility(View.VISIBLE);
                 }
             }
+
+            if (favouritesTabLayout.getSelectedTabPosition() == 0){
+                if (!propertySaleItems.isEmpty()){
+                    propertyItems = propertySaleItems;
+                    properties = propertiesSale;
+                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                    numFavouritesTextView.setText(numProperties);
+                    adapter.setItems(propertyItems);
+                }
+            }else{
+                if (!propertyRentalItems.isEmpty()){
+                    propertyItems = propertyRentalItems;
+                    properties = propertiesRental;
+                    String numProperties = propertyItems.size() + " " + getString(R.string.properties);
+                    numFavouritesTextView.setText(numProperties);
+                    adapter.setItems(propertyItems);
+                }
+            }
+
+
         }
     }
 }

@@ -5,18 +5,18 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 public class RequestAddComment extends Request {
-    @SerializedName("content") private String content;
+    @SerializedName("comment") private String comment;
     @SerializedName("user_id") private String userId;
 
-    public RequestAddComment(String content, String userId) {
-        this.content = content;
+    public RequestAddComment(String comment, String userId) {
+        this.comment = comment;
         this.userId = userId;
     }
 
     @Override
     public String toString() {
         return "RequestAddComment{" +
-                "content='" + content + '\'' +
+                "comment='" + comment + '\'' +
                 ", userId='" + userId + '\'' +
                 '}';
     }

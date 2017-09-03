@@ -7,15 +7,15 @@ public class RequestSignUp extends Request{
     @SerializedName("password") private String password;
     @SerializedName("email") private String email;
     @SerializedName("name") private String name;
-    @SerializedName("surnames") private String surnames;
+    @SerializedName("surname") private String surname;
     @SerializedName("isNotification") private boolean isNotification;
 
-    public RequestSignUp(String username, String password, String email, String name, String surnames, boolean isNotification) {
+    public RequestSignUp(String username, String password, String email, String name, String surname, boolean isNotification) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.name = name;
-        this.surnames = surnames;
+        this.surname = surname;
         this.isNotification = isNotification;
     }
 
@@ -26,7 +26,7 @@ public class RequestSignUp extends Request{
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
-                ", surnames='" + surnames + '\'' +
+                ", surname='" + surname + '\'' +
                 ", isNotification=" + isNotification +
                 '}';
     }

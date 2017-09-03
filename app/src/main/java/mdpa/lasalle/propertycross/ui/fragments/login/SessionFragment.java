@@ -263,8 +263,8 @@ public class SessionFragment extends FragmentBase implements
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
         if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
-            String userID = ((ResponseLogin)response).getUserId();
-            String authToken = ((ResponseLogin)response).getAuthToken();
+            String userID = ((ResponseLogin)response).getData().getUserId();
+            String authToken = ((ResponseLogin)response).getData().getAuthToken();
             loginListener.onLogin(userID, authToken);
         }
     }

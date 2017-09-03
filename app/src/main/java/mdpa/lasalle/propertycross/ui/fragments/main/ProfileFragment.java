@@ -2,6 +2,7 @@ package mdpa.lasalle.propertycross.ui.fragments.main;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,14 +34,14 @@ import mdpa.lasalle.propertycross.ui.activities.MainActivity;
 
 public class ProfileFragment extends FragmentBase{
 
-    private EditText nameProfileEditText, surnameEditText, emailEditText, passwordEditText;
+    private EditText nameProfileEditText, surnameEditText, emailEditText;
     private TextView usernameTextView;
     private RelativeLayout noSessionProfileLayout;
     private ScrollView profileLayout;
     private Switch receiveNotificationsSwitch;
     private Button logoutButton, removeUserButton, sessionProfileButton;
 
-    private String username, name, surname, email, password;
+    private String username, name, surname, email;
     private boolean isNotification;
 
     private OnLoginActivityListener loginActivityListener;
@@ -87,7 +88,6 @@ public class ProfileFragment extends FragmentBase{
         nameProfileEditText = (EditText) root.findViewById(R.id.nameProfileEditText);
         surnameEditText = (EditText) root.findViewById(R.id.surnameProfileEditText);
         emailEditText = (EditText) root.findViewById(R.id.emailProfileEditText);
-        passwordEditText = (EditText) root.findViewById(R.id.passwordProfileEditText);
         receiveNotificationsSwitch = (Switch) root.findViewById(R.id.notificationsSwitch);
         logoutButton = (Button) root.findViewById(R.id.logoutButton);
         removeUserButton = (Button) root.findViewById(R.id.removeUserButton);
@@ -141,23 +141,47 @@ public class ProfileFragment extends FragmentBase{
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ApplicationPropertyCross.getInstance().preferences().removeLogin();
-                ApplicationPropertyCross.getInstance().preferences().removeUser();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.close_session);
+                builder.setMessage(R.string.message_dialog_close_session);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ApplicationPropertyCross.getInstance().preferences().removeLogin();
+                        ApplicationPropertyCross.getInstance().preferences().removeUser();
+                        noSessionProfileLayout.setVisibility(View.VISIBLE);
+                        profileLayout.setVisibility(View.GONE);
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
         removeUserButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getHttpManager().callStart(
-                        Http.RequestType.DELETE,
-                        Requests.Values.DELETE_USER,
-                        null,
-                        null,
-                        ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
-                        ApplicationPropertyCross.getInstance().preferences().getUserId(),
-                        null
-                );
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(R.string.remove_user);
+                builder.setMessage(R.string.message_dialog_remove_user);
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getHttpManager().callStart(
+                                Http.RequestType.DELETE,
+                                Requests.Values.DELETE_USER,
+                                null,
+                                null,
+                                ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
+                                ApplicationPropertyCross.getInstance().preferences().getUserId(),
+                                null
+                        );
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }
@@ -173,13 +197,15 @@ public class ProfileFragment extends FragmentBase{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_profile:
-                if (!isEmpty(nameProfileEditText) && !isEmpty(surnameEditText) && !isEmpty(emailEditText) &&
-                        !isEmpty(passwordEditText)){
+                if (!isEmpty(nameProfileEditText) && !isEmpty(surnameEditText) && !isEmpty(emailEditText)){
+                    name = nameProfileEditText.getText().toString();
+                    surname = surnameEditText.getText().toString();
+                    email = emailEditText.getText().toString();
                     getHttpManager().callStart(
                             Http.RequestType.POST,
                             Requests.Values.POST_UPDATE_USER,
                             null,
-                            new RequestUpdateUser(username, password, email, name, surname, isNotification),
+                            new RequestUpdateUser(username, email, name, surname, isNotification),
                             ApplicationPropertyCross.getInstance().preferences().getLoginApiKey(),
                             ApplicationPropertyCross.getInstance().preferences().getUserId(),
                             null
@@ -224,14 +250,12 @@ public class ProfileFragment extends FragmentBase{
             username = user.getUsername();
             name = user.getName();
             surname = user.getSurname();
-            email = user.getEmail();
-            password = user.getPassword();
+            email = user.getEmail().get(0).getAddress();
             isNotification = user.isNotification();
             usernameTextView.setText(user.getUsername());
             nameProfileEditText.setText(name);
             surnameEditText.setText(surname);
             emailEditText.setText(email);
-            passwordEditText.setText(password);
             receiveNotificationsSwitch.setChecked(isNotification);
         } else if (requestId.equals(Requests.Values.POST_UPDATE_USER.id)) {
 

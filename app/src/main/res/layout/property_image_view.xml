@@ -8,5 +8,6 @@
         android:id="@+id/propertyItemImage"
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:scaleType="centerCrop"
         app:srcCompat="@drawable/default_image" />
 </LinearLayout>

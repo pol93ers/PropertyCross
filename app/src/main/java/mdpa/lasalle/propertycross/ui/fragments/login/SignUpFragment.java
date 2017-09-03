@@ -18,16 +18,18 @@ import mdpa.lasalle.propertycross.R;
 import mdpa.lasalle.propertycross.base.fragment.FragmentBase;
 import mdpa.lasalle.propertycross.http.Http;
 import mdpa.lasalle.propertycross.http.project.Requests;
+import mdpa.lasalle.propertycross.http.project.request.RequestLogin;
 import mdpa.lasalle.propertycross.http.project.request.RequestSignUp;
 import mdpa.lasalle.propertycross.http.project.response.Response;
 import mdpa.lasalle.propertycross.http.project.response.ResponseError;
+import mdpa.lasalle.propertycross.http.project.response.ResponseGeneric;
 import mdpa.lasalle.propertycross.http.project.response.ResponseLogin;
 
 public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChangeListener{
 
     private ViewPager signupPager;
 
-    private String username, password;
+    private String username, password, email;
 
     @NonNull
     @Override
@@ -54,6 +56,7 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getHttpManager().receiverRegister(getContext(), Requests.Values.POST_SIGN_UP);
+        getHttpManager().receiverRegister(getContext(), Requests.Values.POST_LOGIN);
     }
 
     @Override
@@ -164,8 +167,8 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
                     signUpButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(!isEmpty(emailEditText) && isEmpty(nameEditText) && !isEmpty(surnameEditText)){
-                                String email = emailEditText.getText().toString();
+                            if(!isEmpty(emailEditText) && !isEmpty(nameEditText) && !isEmpty(surnameEditText)){
+                                email = emailEditText.getText().toString();
                                 if(android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                                     String name = nameEditText.getText().toString();
                                     String surname = surnameEditText.getText().toString();
@@ -219,6 +222,8 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
         super.onHttpBroadcastError(requestId, response);
         if (requestId.equals(Requests.Values.POST_SIGN_UP.id)) {
 
+        } else if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+
         }
     }
 
@@ -226,8 +231,18 @@ public class SignUpFragment extends FragmentBase implements ViewPager.OnPageChan
     public void onHttpBroadcastSuccess(String requestId, Response response) {
         super.onHttpBroadcastSuccess(requestId, response);
         if (requestId.equals(Requests.Values.POST_SIGN_UP.id)) {
-            String userID = ((ResponseLogin)response).getUserId();
-            String authToken = ((ResponseLogin)response).getAuthToken();
+            getHttpManager().callStart(
+                    Http.RequestType.POST,
+                    Requests.Values.POST_LOGIN,
+                    null,
+                    new RequestLogin(email, password),
+                    null,
+                    null,
+                    null
+            );
+        } else if (requestId.equals(Requests.Values.POST_LOGIN.id)) {
+            String userID = ((ResponseLogin)response).getData().getUserId();
+            String authToken = ((ResponseLogin)response).getData().getAuthToken();
             signUpListener.onSignUp(userID, authToken);
         }
     }

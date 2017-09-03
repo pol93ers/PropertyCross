@@ -2,23 +2,40 @@ package mdpa.lasalle.propertycross.http.project.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseLogin extends Response {
-    @SerializedName("user_id") private String userId;
-    @SerializedName("token") private String authToken;
+import java.io.Serializable;
 
-    public String getUserId() {
-        return userId;
+public class ResponseLogin extends Response {
+    @SerializedName("data") private Data data;
+
+    public class Data implements Serializable{
+        @SerializedName("userId") private String userId;
+        @SerializedName("authToken") private String authToken;
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getAuthToken() {
+            return authToken;
+        }
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "userId=" + userId +
+                    ", authToken='" + authToken + '\'' +
+                    '}';
+        }
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public Data getData() {
+        return data;
     }
 
     @Override
     public String toString() {
         return "ResponseLogin{" +
-                "userId='" + userId + '\'' +
-                ", authToken='" + authToken + '\'' +
+                "data=" + data +
                 '}';
     }
 }

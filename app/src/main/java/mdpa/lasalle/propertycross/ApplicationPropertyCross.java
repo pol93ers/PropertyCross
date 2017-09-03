@@ -30,8 +30,6 @@ public class ApplicationPropertyCross extends ApplicationBase{
         instance = this;
 
         appPreferences = new AppPreferences(this);
-        appPreferences.removeUser();
-        appPreferences.removeLogin();
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
